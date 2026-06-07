@@ -16,7 +16,7 @@ export function ClientVault({ client }) {
 
   if (!currentClient) {
     return (
-      <section className="rounded-3xl border border-white/5 bg-neutral-900 p-5">
+      <section className="border border-neutral-800 bg-white/[0.03] p-5">
         <div className="text-sm text-neutral-400">No client selected.</div>
       </section>
     );
@@ -30,14 +30,14 @@ export function ClientVault({ client }) {
   };
 
   return (
-    <section className="rounded-3xl border border-white/5 bg-neutral-900 p-5">
+    <section className="border border-neutral-800 bg-white/[0.03] p-5">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <div className="text-xs uppercase tracking-[0.35em] text-neutral-500">Client Master Vault</div>
           <h2 className="mt-2 text-2xl font-black tracking-tight text-neutral-100">{currentClient.name}</h2>
           <p className="mt-2 text-sm text-neutral-400">Status: {currentClient.status}</p>
         </div>
-        <span className="rounded-full border border-emerald-400/20 bg-emerald-400/10 px-4 py-2 text-sm font-semibold text-emerald-300">
+        <span className="border border-neon-green/20 bg-neon-green/10 px-4 py-2 text-sm font-semibold text-neon-green">
           Live Notes Enabled
         </span>
       </div>
@@ -52,13 +52,13 @@ export function ClientVault({ client }) {
                 href={url}
                 target="_blank"
                 rel="noreferrer"
-                className="rounded-2xl border border-white/5 bg-white/5 px-4 py-3 text-sm font-semibold text-neutral-100 transition hover:bg-white/10"
+                className="border border-neutral-800 bg-black/40 px-4 py-3 text-sm font-semibold text-neutral-100 transition hover:border-neon-green hover:bg-neon-green/10"
               >
                 {normalizeQuickLink(url)}
               </a>
             ))
           ) : (
-            <div className="rounded-2xl border border-dashed border-white/10 bg-white/5 px-4 py-3 text-sm text-neutral-400">
+            <div className="border border-dashed border-neutral-800 bg-black/40 px-4 py-3 text-sm text-neutral-400">
               No quick links yet.
             </div>
           )}
@@ -70,7 +70,7 @@ export function ClientVault({ client }) {
         <textarea
           value={currentClient.notes ?? ''}
           onChange={handleNotesChange}
-          className="mt-3 min-h-[320px] w-full rounded-3xl border border-white/5 bg-neutral-950 p-4 text-sm leading-6 text-neutral-100 outline-none transition placeholder:text-neutral-600 focus:border-violet-400/40 focus:ring-2 focus:ring-violet-400/10"
+          className="mt-3 min-h-[320px] w-full border border-neutral-800 bg-black/60 p-4 text-sm leading-6 text-neutral-100 outline-none transition placeholder:text-neutral-600 focus:border-neon-green"
           placeholder="Capture everything: session recap, links, next steps, delivery notes."
         />
       </div>

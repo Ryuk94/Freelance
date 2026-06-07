@@ -10,24 +10,30 @@ function formatCurrency(amount) {
 
 export function FinancialsView({ financials, clients }) {
   return (
-    <section className="rounded-3xl border border-white/5 bg-neutral-900 p-5">
-      <div className="text-xs uppercase tracking-[0.35em] text-neutral-500">Financials</div>
-      <h2 className="mt-2 text-2xl font-black tracking-tight">Invoices & Goals</h2>
+    <section className="border border-neutral-800 bg-white/[0.03] p-5">
+      <div className="text-[10px] uppercase tracking-[0.7em] text-neutral-500">[ FINANCIALS ]</div>
+      <h2 className="mt-2 font-serif text-3xl uppercase tracking-[0.08em] text-neon-green">Ledger</h2>
       <div className="mt-6 space-y-3">
-        {financials.map((entry) => {
-          const client = clients.find((item) => item.id === entry.clientId);
-          return (
-            <div key={entry.id} className="flex items-center justify-between rounded-3xl border border-white/5 bg-white/5 p-4">
-              <div>
-                <div className="font-semibold text-neutral-100">{client?.name ?? 'Unlinked client'}</div>
-                <div className="text-sm text-neutral-400">
-                  {entry.type} - {entry.status}
+        {financials.length > 0 ? (
+          financials.map((entry) => {
+            const client = clients.find((item) => item.id === entry.clientId);
+            return (
+              <div key={entry.id} className="flex items-center justify-between border border-neutral-800 bg-black/40 px-4 py-4">
+                <div>
+                  <div className="text-sm font-bold uppercase tracking-[0.35em] text-neon-green">{client?.name ?? 'UNLINKED CLIENT'}</div>
+                  <div className="mt-1 text-[10px] uppercase tracking-[0.45em] text-neutral-500">
+                    {entry.type} / {entry.status}
+                  </div>
                 </div>
+                <div className="font-mono text-xl font-bold tracking-[0.2em] text-neon-green tabular-nums">{formatCurrency(entry.amount)}</div>
               </div>
-              <div className="text-lg font-black text-emerald-400">{formatCurrency(entry.amount)}</div>
-            </div>
-          );
-        })}
+            );
+          })
+        ) : (
+          <div className="border border-dashed border-neutral-800 px-4 py-3 text-xs uppercase tracking-[0.45em] text-neutral-500">
+            ledger empty
+          </div>
+        )}
       </div>
     </section>
   );

@@ -11,11 +11,7 @@ export function Scratchpad({ client }) {
   }, [client?.id]);
 
   useEffect(() => {
-    if (!client?.id) {
-      return;
-    }
-
-    if (!isDirty) {
+    if (!client?.id || !isDirty) {
       return;
     }
 
@@ -39,10 +35,10 @@ export function Scratchpad({ client }) {
   }
 
   return (
-    <section className="space-y-3">
+    <section className="space-y-3 border border-neutral-800 bg-black/35 p-4">
       <div>
-        <div className="text-xs uppercase tracking-[0.35em] text-neutral-500">Scratchpad</div>
-        <p className="mt-2 text-sm text-neutral-400">Auto-saves after a short pause. No save button, no pressure.</p>
+        <div className="text-[10px] uppercase tracking-[0.7em] text-neutral-500">[ SCRATCHPAD ]</div>
+        <p className="mt-2 text-[11px] uppercase tracking-[0.3em] text-neutral-500">autosaves after a short pause</p>
       </div>
 
       <textarea
@@ -51,8 +47,8 @@ export function Scratchpad({ client }) {
           setDraft(event.target.value);
           setIsDirty(true);
         }}
-        placeholder="Capture notes, edits, deliverables, and next steps..."
-        className="min-h-[420px] w-full rounded-3xl border border-transparent bg-transparent px-0 py-2 text-[15px] leading-7 text-neutral-100 outline-none placeholder:text-neutral-600 focus:border-transparent focus:ring-0"
+        placeholder="CAPTURE NOTES, EDITS, DELIVERABLES, AND NEXT STEPS..."
+        className="min-h-[420px] w-full border border-neutral-800 bg-transparent px-0 py-2 font-mono text-base leading-8 text-neon-green outline-none placeholder:text-neutral-600 focus:border-neon-green/30 focus:ring-0"
       />
     </section>
   );

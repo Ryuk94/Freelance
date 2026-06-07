@@ -155,42 +155,42 @@ export function QuickAddModal({ open, onClose }) {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-neutral-950/80 px-4 py-6 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/88 px-4 py-6"
       onMouseDown={handleBackdropMouseDown}
     >
       <div
         role="dialog"
         aria-modal="true"
         aria-labelledby="quick-add-title"
-        className="w-full max-w-xl rounded-[2rem] border border-white/10 bg-neutral-900 shadow-2xl shadow-black/70"
+        className="w-full max-w-xl border border-neutral-800 bg-black/95 shadow-[0_0_60px_rgba(0,0,0,0.8)]"
         onMouseDown={(event) => event.stopPropagation()}
       >
-        <div className="flex items-start justify-between gap-4 border-b border-white/5 px-5 py-5">
+        <div className="flex items-start justify-between gap-4 border-b border-neutral-800 px-5 py-5">
           <div>
-            <div className="text-xs uppercase tracking-[0.35em] text-neutral-500">Quick Add</div>
-            <h2 id="quick-add-title" className="mt-2 text-2xl font-black tracking-tight text-neutral-100">
-              Capture something new
+            <div className="text-[10px] uppercase tracking-[0.7em] text-neutral-500">[ QUICK ADD ]</div>
+            <h2 id="quick-add-title" className="mt-2 font-serif text-4xl uppercase tracking-[0.08em] text-neon-green">
+              Capture
             </h2>
-            <p className="mt-2 text-sm text-neutral-400">Fast entry for the next lead or invoice. No extra clutter.</p>
+            <p className="mt-2 text-[11px] uppercase tracking-[0.3em] text-neutral-500">fast entry for leads and invoices</p>
           </div>
 
           <button
             type="button"
             onClick={onClose}
-            className="rounded-full border border-white/10 bg-white/5 px-3 py-2 text-sm font-semibold text-neutral-300 transition hover:bg-white/10 hover:text-white"
+            className="border border-neon-red/30 bg-neon-red/10 px-3 py-2 text-[10px] font-bold uppercase tracking-[0.45em] text-neon-red transition hover:bg-neon-red hover:text-black"
           >
-            Esc
+            esc
           </button>
         </div>
 
         <div className="px-5 pt-5">
-          <div className="inline-flex rounded-full border border-white/10 bg-neutral-950 p-1">
+          <div className="inline-flex border border-neutral-800 bg-white/[0.03] p-1">
             <button
               type="button"
               onClick={() => setMode('lead')}
               className={[
-                'rounded-full px-4 py-2 text-sm font-semibold transition',
-                mode === 'lead' ? 'bg-violet-500 text-white' : 'text-neutral-400 hover:text-white',
+                'px-4 py-2 text-xs font-bold uppercase tracking-[0.45em] transition',
+                mode === 'lead' ? 'bg-neon-green text-black' : 'text-neutral-400 hover:text-neon-green',
               ].join(' ')}
             >
               New Lead
@@ -199,8 +199,8 @@ export function QuickAddModal({ open, onClose }) {
               type="button"
               onClick={() => setMode('invoice')}
               className={[
-                'rounded-full px-4 py-2 text-sm font-semibold transition',
-                mode === 'invoice' ? 'bg-violet-500 text-white' : 'text-neutral-400 hover:text-white',
+                'px-4 py-2 text-xs font-bold uppercase tracking-[0.45em] transition',
+                mode === 'invoice' ? 'bg-neon-green text-black' : 'text-neutral-400 hover:text-neon-green',
               ].join(' ')}
             >
               New Invoice
@@ -212,33 +212,33 @@ export function QuickAddModal({ open, onClose }) {
           {mode === 'lead' ? (
             <form className="space-y-4" onSubmit={handleLeadSubmit}>
               <label className="block space-y-2">
-                <span className="text-sm font-medium text-neutral-300">Company Name</span>
+                <span className="text-[10px] uppercase tracking-[0.45em] text-neutral-500">Company Name</span>
                 <input
                   ref={leadInputRef}
                   value={leadCompanyName}
                   onChange={(event) => setLeadCompanyName(event.target.value)}
                   placeholder="North Star Studio"
-                  className="w-full rounded-lg border border-white/10 bg-neutral-900 p-3 text-white outline-none transition placeholder:text-neutral-600 focus:border-violet-500 focus:ring-1 focus:ring-violet-500"
+                  className="w-full border border-neutral-800 bg-black/60 px-3 py-3 text-xs uppercase tracking-[0.35em] text-neon-green outline-none placeholder:text-neutral-600 focus:border-neon-green"
                 />
               </label>
 
               <button
                 type="submit"
-                className="w-full rounded-lg bg-violet-500 px-4 py-3 text-sm font-bold text-white transition hover:bg-violet-400"
+                className="w-full border border-neon-green/30 bg-neon-green/10 px-4 py-3 text-xs font-bold uppercase tracking-[0.55em] text-neon-green transition hover:bg-neon-green hover:text-black"
               >
-                Add Lead
+                add lead
               </button>
             </form>
           ) : (
             <form className="space-y-4" onSubmit={handleInvoiceSubmit}>
               <label className="block space-y-2">
-                <span className="text-sm font-medium text-neutral-300">Client</span>
+                <span className="text-[10px] uppercase tracking-[0.45em] text-neutral-500">Client</span>
                 <select
                   ref={clientSelectRef}
                   value={invoiceClientId}
                   onChange={(event) => setInvoiceClientId(event.target.value)}
                   disabled={!hasActiveClients}
-                  className="w-full rounded-lg border border-white/10 bg-neutral-900 p-3 text-white outline-none transition focus:border-violet-500 focus:ring-1 focus:ring-violet-500 disabled:cursor-not-allowed disabled:opacity-60"
+                  className="w-full border border-neutral-800 bg-black/60 px-3 py-3 text-xs uppercase tracking-[0.35em] text-neon-green outline-none focus:border-neon-green disabled:cursor-not-allowed disabled:opacity-60"
                 >
                   {hasActiveClients ? (
                     activeClientOptions.map((client) => (
@@ -253,7 +253,7 @@ export function QuickAddModal({ open, onClose }) {
               </label>
 
               <label className="block space-y-2">
-                <span className="text-sm font-medium text-neutral-300">Amount</span>
+                <span className="text-[10px] uppercase tracking-[0.45em] text-neutral-500">Amount</span>
                 <input
                   ref={amountInputRef}
                   type="number"
@@ -262,16 +262,16 @@ export function QuickAddModal({ open, onClose }) {
                   value={invoiceAmount}
                   onChange={(event) => setInvoiceAmount(event.target.value)}
                   placeholder="850"
-                  className="w-full rounded-lg border border-white/10 bg-neutral-900 p-3 text-white outline-none transition placeholder:text-neutral-600 focus:border-violet-500 focus:ring-1 focus:ring-violet-500"
+                  className="w-full border border-neutral-800 bg-black/60 px-3 py-3 text-xs uppercase tracking-[0.35em] text-neon-green outline-none placeholder:text-neutral-600 focus:border-neon-green"
                 />
               </label>
 
               <button
                 type="submit"
                 disabled={!hasActiveClients || !invoiceClientId || !invoiceAmount.trim()}
-                className="w-full rounded-lg bg-emerald-400 px-4 py-3 text-sm font-black text-neutral-950 transition hover:bg-emerald-300 disabled:cursor-not-allowed disabled:bg-neutral-700 disabled:text-neutral-300"
+                className="w-full border border-neon-green/30 bg-neon-green/10 px-4 py-3 text-xs font-bold uppercase tracking-[0.55em] text-neon-green transition hover:bg-neon-green hover:text-black disabled:cursor-not-allowed disabled:border-neutral-800 disabled:bg-black/35 disabled:text-neutral-500"
               >
-                Add Invoice
+                add invoice
               </button>
             </form>
           )}

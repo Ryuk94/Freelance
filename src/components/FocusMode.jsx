@@ -4,9 +4,9 @@ export function FocusMode({ task, onDone, onSkip, onExit }) {
   const hasTask = Boolean(task);
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-neutral-950 px-4 text-center text-neutral-100">
+    <div className="flex min-h-screen items-center justify-center bg-black px-4 text-center text-neutral-100">
       <div className="w-full max-w-3xl">
-        <div className="text-[10px] uppercase tracking-[0.6em] text-violet-300/70">Focus Mode</div>
+        <div className="text-[10px] uppercase tracking-[0.6em] text-neutral-500">Focus Mode</div>
 
         {hasTask ? (
           <>
@@ -21,14 +21,14 @@ export function FocusMode({ task, onDone, onSkip, onExit }) {
               <button
                 type="button"
                 onClick={onDone}
-                className="rounded-2xl bg-emerald-400 px-10 py-5 text-base font-black text-neutral-950 transition hover:bg-emerald-300 focus:outline-none focus:ring-2 focus:ring-emerald-300 focus:ring-offset-2 focus:ring-offset-neutral-950"
+                className="border border-neon-green/30 bg-neon-green px-10 py-5 text-base font-black text-black transition hover:bg-neon-green/90 focus:outline-none focus:ring-2 focus:ring-neon-green focus:ring-offset-2 focus:ring-offset-black"
               >
                 Mark Done
               </button>
               <button
                 type="button"
                 onClick={onSkip}
-                className="rounded-2xl border border-white/10 bg-white/5 px-10 py-5 text-base font-semibold text-neutral-100 transition hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-violet-400 focus:ring-offset-2 focus:ring-offset-neutral-950"
+                className="border border-neutral-800 bg-white/[0.03] px-10 py-5 text-base font-semibold text-neutral-100 transition hover:border-neon-red/40 hover:bg-neon-red/10 hover:text-neon-red focus:outline-none focus:ring-2 focus:ring-neon-red focus:ring-offset-2 focus:ring-offset-black"
               >
                 Skip for now
               </button>
@@ -36,8 +36,8 @@ export function FocusMode({ task, onDone, onSkip, onExit }) {
           </>
         ) : (
           <>
-            <div className="mx-auto mt-8 flex h-16 w-16 items-center justify-center rounded-full border border-emerald-400/20 bg-emerald-400/10 text-2xl text-emerald-300">
-              ✓
+            <div className="mx-auto mt-8 flex h-16 w-16 items-center justify-center border border-neon-green/20 bg-neon-green/10 text-2xl text-neon-green">
+              ?
             </div>
             <h1 className="mx-auto mt-6 max-w-2xl text-3xl font-black tracking-tight text-neutral-50 sm:text-4xl lg:text-5xl">
               You&apos;re all caught up!
@@ -50,7 +50,7 @@ export function FocusMode({ task, onDone, onSkip, onExit }) {
               <button
                 type="button"
                 onClick={onExit}
-                className="rounded-2xl bg-violet-500 px-10 py-5 text-base font-black text-white transition hover:bg-violet-400 focus:outline-none focus:ring-2 focus:ring-violet-300 focus:ring-offset-2 focus:ring-offset-neutral-950"
+                className="border border-neon-green/30 bg-neon-green px-10 py-5 text-base font-black text-black transition hover:bg-neon-green/90 focus:outline-none focus:ring-2 focus:ring-neon-green focus:ring-offset-2 focus:ring-offset-black"
               >
                 Exit Focus Mode
               </button>

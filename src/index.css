@@ -1,6 +1,16 @@
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@font-face {
+  font-family: 'Ivy Presto Headline Thin';
+  src: url('/fonts/ivy-presto-headline-thin.otf') format('opentype');
+  font-weight: 100;
+  font-style: normal;
+  font-display: swap;
+}
 
 html,
 body,
@@ -8,9 +18,39 @@ body,
   min-height: 100%;
 }
 
+html {
+  color-scheme: dark;
+}
+
+body,
+#root {
+  background-color: #000000;
+}
+
 body {
   margin: 0;
-  background: #0a0a0a;
-  color: #f5f5f5;
-  font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  color: #f5f5f0;
+  font-family: 'IBM Plex Mono', ui-monospace, SFMono-Regular, monospace;
+  font-size: 15px;
+  line-height: 1.6;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #000000;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+::selection {
+  background: rgba(196, 255, 14, 0.28);
+  color: #f7ffe0;
 }

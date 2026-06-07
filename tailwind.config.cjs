@@ -4,14 +4,19 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['Inter', 'ui-sans-serif', 'system-ui']
+        sans: ['"IBM Plex Mono"', 'ui-monospace', 'SFMono-Regular', 'monospace'],
+        serif: ['"Ivy Presto Headline Thin"', '"Playfair Display"', 'Georgia', 'serif']
       },
       colors: {
         obsidian: {
-          950: '#050505',
-          900: '#0a0a0a',
-          800: '#141414',
-          700: '#1f1f1f'
+          950: '#000000',
+          900: '#050505',
+          800: '#101010',
+          700: '#1a1a1a'
+        },
+        neon: {
+          green: '#c4ff0e',
+          red: '#ff3b30'
         }
       }
     }

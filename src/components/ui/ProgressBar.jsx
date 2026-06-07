@@ -1,8 +1,8 @@
 import React from 'react';
 
 const ACCENTS = {
-  emerald: 'bg-emerald-400',
-  violet: 'bg-violet-400',
+  emerald: 'bg-neon-green',
+  warning: 'bg-neon-red',
 };
 
 export function ProgressBar({ value, label, accent = 'emerald' }) {
@@ -10,13 +10,13 @@ export function ProgressBar({ value, label, accent = 'emerald' }) {
 
   return (
     <div>
-      <div className="flex items-center justify-between gap-4 text-sm text-neutral-400">
+      <div className="flex items-center justify-between gap-4 text-[10px] uppercase tracking-[0.45em] text-neutral-400">
         <span>{label}</span>
-        <span className="font-semibold text-neutral-200">{width}%</span>
+        <span className="text-neon-green tabular-nums">{width}%</span>
       </div>
-      <div className="mt-3 h-3 overflow-hidden rounded-full bg-white/5">
+      <div className="mt-3 h-3 overflow-hidden border border-neutral-800 bg-black/60">
         <div
-          className={`h-full rounded-full transition-all duration-500 ease-out ${ACCENTS[accent]}`}
+          className={`h-full transition-all duration-500 ease-out ${ACCENTS[accent] ?? ACCENTS.emerald}`}
           style={{ width: `${width}%` }}
         />
       </div>
