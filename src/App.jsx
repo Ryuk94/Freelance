@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from './db';
 import { Dashboard } from './components/Dashboard';
@@ -8,37 +8,31 @@ import { LeadsView } from './components/LeadsView';
 import { FinancialsView } from './components/FinancialsView';
 import { ReceiptsView } from './components/ReceiptsView';
 import { QuickAddModal } from './components/QuickAddModal';
-import { demoClients, demoFinancials, demoLeads } from './lib/demoData';
 import { useCloudSync } from './hooks/useCloudSync';
 
 const NAV_ITEMS = ['dashboard', 'clients', 'leads', 'receipts', 'financials'];
+const TEST_DATA_WIPED_KEY = 'freelanceos.testDataWiped';
 
-function useSeedDemoRecords(leads, clients, financials, enabled) {
-  const seeded = useRef(false);
-
+function useWipeDemoDataOnce() {
   useEffect(() => {
-    if (!enabled) {
+    const alreadyWiped = window.localStorage.getItem(TEST_DATA_WIPED_KEY) === '1';
+    if (alreadyWiped) {
       return;
     }
 
-    if (seeded.current || leads === undefined || clients === undefined || financials === undefined) {
-      return;
-    }
+    window.localStorage.setItem(TEST_DATA_WIPED_KEY, '1');
 
-    const isEmpty = leads.length === 0 && clients.length === 0 && financials.length === 0;
-    if (!isEmpty) {
-      seeded.current = true;
-      return;
-    }
-
-    seeded.current = true;
-    const timestamp = Date.now();
-    void db.transaction('rw', db.leads, db.clients, db.financials, async () => {
-      await db.leads.bulkAdd(demoLeads.map((lead) => ({ ...lead, updatedAt: timestamp })));
-      await db.clients.bulkAdd(demoClients.map((client) => ({ ...client, updatedAt: timestamp })));
-      await db.financials.bulkAdd(demoFinancials.map((item) => ({ ...item, updatedAt: timestamp })));
+    void db.transaction('rw', db.leads, db.clients, db.financials, db.gamification, db.receipts, db.commsTracker, async () => {
+      await Promise.all([
+        db.leads.clear(),
+        db.clients.clear(),
+        db.financials.clear(),
+        db.gamification.clear(),
+        db.receipts.clear(),
+        db.commsTracker.clear(),
+      ]);
     });
-  }, [clients, enabled, financials, leads]);
+  }, []);
 }
 
 export function App() {
@@ -46,26 +40,21 @@ export function App() {
   const clients = useLiveQuery(() => db.clients.toArray(), []);
   const financials = useLiveQuery(() => db.financials.toArray(), []);
   const receipts = useLiveQuery(() => db.receipts.orderBy('date').reverse().toArray(), []);
-  const { status: syncStatus, lastSynced, forceSync, hasSupabaseConfig } = useCloudSync();
-
-  useSeedDemoRecords(leads, clients, financials, !hasSupabaseConfig);
+  const { status: syncStatus, lastSynced, forceSync } = useCloudSync();
+  useWipeDemoDataOnce();
 
   const [activeView, setActiveView] = useState('dashboard');
   const [selectedClientId, setSelectedClientId] = useState(null);
   const [quickAddOpen, setQuickAddOpen] = useState(false);
-
-  const resolvedLeads = leads?.length ? leads : demoLeads;
-  const resolvedClients = clients?.length ? clients : demoClients;
-  const resolvedFinancials = financials?.length ? financials : demoFinancials;
 
   useEffect(() => {
     if (activeView !== 'clients' || selectedClientId) {
       return;
     }
 
-    const firstClient = resolvedClients.find((client) => client.status === 'active') ?? resolvedClients[0];
+    const firstClient = clients?.find((client) => client.status === 'active') ?? clients?.[0];
     setSelectedClientId(firstClient?.id ?? null);
-  }, [activeView, resolvedClients, selectedClientId]);
+  }, [activeView, clients, selectedClientId]);
 
   const handleOpenClient = (clientId) => {
     setSelectedClientId(clientId);
@@ -84,14 +73,14 @@ export function App() {
         onQuickAddOpen={() => setQuickAddOpen(true)}
       >
         {activeView === 'dashboard' && (
-          <Dashboard clients={resolvedClients} financials={resolvedFinancials} onOpenClient={handleOpenClient} />
+          <Dashboard clients={clients ?? []} financials={financials ?? []} onOpenClient={handleOpenClient} />
         )}
         {activeView === 'clients' && (
-          <ClientsView clients={resolvedClients} selectedClientId={selectedClientId} onSelectClient={setSelectedClientId} />
+          <ClientsView clients={clients ?? []} selectedClientId={selectedClientId} onSelectClient={setSelectedClientId} />
         )}
-        {activeView === 'leads' && <LeadsView leads={resolvedLeads} />}
+        {activeView === 'leads' && <LeadsView leads={leads ?? []} />}
         {activeView === 'receipts' && <ReceiptsView receipts={receipts ?? []} />}
-        {activeView === 'financials' && <FinancialsView financials={resolvedFinancials} clients={resolvedClients} />}
+        {activeView === 'financials' && <FinancialsView financials={financials ?? []} clients={clients ?? []} />}
       </AppLayout>
 
       <QuickAddModal open={quickAddOpen} onClose={() => setQuickAddOpen(false)} />
