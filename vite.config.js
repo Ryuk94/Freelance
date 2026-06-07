@@ -6,7 +6,7 @@ const repoName = process.env.GITHUB_PAGES_REPO || 'Freelance';
 const isGithubPages = process.env.GITHUB_PAGES === 'true';
 
 export default defineConfig({
-  base: isGithubPages ? `/${repoName}/` : '/',
+  base: isGithubPages ? `/${repoName}/` : './',
   plugins: [
     react(),
     VitePWA({
