@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800;900&family=Playfair+Display:wght@600;700;800&family=Roboto:wght@400;500;700;900&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -56,14 +56,17 @@ body {
 }
 
 :root[data-theme='boringos'] {
-  --app-bg: #f3f4f6;
-  --app-text: #111827;
-  --muted-text: #6b7280;
-  --panel-bg: rgba(255, 255, 255, 0.9);
-  --card-bg: rgba(255, 255, 255, 0.92);
-  --card-hover: rgba(255, 255, 255, 1);
-  --surface-bg: rgba(255, 255, 255, 0.98);
-  --card-shadow: 0 20px 50px rgba(15, 23, 42, 0.08);
+  --app-bg: #0b0b0d;
+  --app-text: #f4f4f5;
+  --muted-text: #a1a1aa;
+  --panel-bg: rgba(17, 17, 20, 0.96);
+  --card-bg: rgba(24, 24, 28, 0.96);
+  --card-hover: rgba(30, 30, 35, 1);
+  --surface-bg: rgba(18, 18, 22, 0.98);
+  --card-shadow: 0 22px 50px rgba(0, 0, 0, 0.35);
+  --boring-primary: #8b5cf6;
+  --boring-secondary: #34d399;
+  --boring-accent: #e5e7eb;
 }
 
 :root[data-mode='light'] {
@@ -89,37 +92,103 @@ body {
 }
 
 :root[data-theme='boringos'] .text-neon-green {
-  color: #2563eb;
+  color: var(--boring-secondary);
 }
 
 :root[data-theme='boringos'] .bg-neon-green {
-  background-color: #dbeafe;
+  background-color: rgba(139, 92, 246, 0.92);
 }
 
 :root[data-theme='boringos'] .text-neon-red {
-  color: #b91c1c;
+  color: #f87171;
 }
 
 :root[data-theme='boringos'] .bg-neon-red {
-  background-color: #fee2e2;
+  background-color: rgba(248, 113, 113, 0.18);
 }
 
 :root[data-theme='boringos'] .hover\:bg-neon-green\/90:hover {
-  background-color: #bfdbfe;
+  background-color: rgba(139, 92, 246, 0.82);
 }
 
 :root[data-theme='boringos'] .hover\:bg-neon-red\/90:hover {
-  background-color: #fecaca;
+  background-color: rgba(248, 113, 113, 0.28);
 }
 
 :root[data-theme='boringos'] .shadow-\[var\(--card-shadow\)\] {
-  box-shadow: 0 20px 50px rgba(15, 23, 42, 0.08);
+  box-shadow: 0 22px 50px rgba(0, 0, 0, 0.35);
+}
+
+:root[data-theme='boringos'] .font-serif {
+  font-family: 'Inter', 'Roboto', ui-sans-serif, system-ui, sans-serif;
+  font-weight: 900;
+  letter-spacing: -0.03em;
+}
+
+:root[data-theme='boringos'] .font-sans {
+  font-family: 'Roboto', 'Inter', ui-sans-serif, system-ui, sans-serif;
 }
 
 :root[data-theme='boringos'] .rounded-3xl,
 :root[data-theme='boringos'] .rounded-\[2rem\],
 :root[data-theme='boringos'] .rounded-2xl {
-  border-radius: 1.25rem;
+  border-radius: 1.6rem;
+}
+
+:root[data-theme='boringos'] .border-white\/10,
+:root[data-theme='boringos'] .border-white\/5 {
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+:root[data-theme='boringos'] .bg-white\/\[0\.04\],
+:root[data-theme='boringos'] .bg-white\/\[0\.03\],
+:root[data-theme='boringos'] .bg-white\/\[0\.02\] {
+  background-color: rgba(255, 255, 255, 0.06);
+}
+
+:root[data-theme='boringos'] .text-neutral-300,
+:root[data-theme='boringos'] .text-neutral-400,
+:root[data-theme='boringos'] .text-neutral-500 {
+  color: #a1a1aa;
+}
+
+:root[data-theme='boringos'] .text-black {
+  color: #0b0b0d;
+}
+
+:root[data-theme='boringos'] .bg-black {
+  background-color: #121216;
+}
+
+:root[data-theme='boringos'] .bg-black\/70 {
+  background-color: rgba(18, 18, 22, 0.7);
+}
+
+:root[data-theme='boringos'] .bg-black\/90 {
+  background-color: rgba(16, 16, 18, 0.95);
+}
+
+:root[data-theme='boringos'] .bg-white\/\[0\.08\] {
+  background-color: rgba(255, 255, 255, 0.08);
+}
+
+:root[data-theme='boringos'] .hover\:bg-white\/\[0\.08\]:hover,
+:root[data-theme='boringos'] .hover\:bg-white\/\[0\.10\]:hover {
+  background-color: rgba(255, 255, 255, 0.12);
+}
+
+:root[data-theme='boringos'] .text-\[var\(--app-text\)\] {
+  color: var(--app-text);
+}
+
+:root[data-theme='boringos'] .bg-\[var\(--panel-bg\)\],
+:root[data-theme='boringos'] .bg-\[var\(--card-bg\)\],
+:root[data-theme='boringos'] .bg-\[var\(--surface-bg\)\] {
+  background-color: rgba(24, 24, 28, 0.96);
+}
+
+:root[data-theme='boringos'] .border-neon-green {
+  border-color: rgba(139, 92, 246, 0.6);
 }
 
 button,

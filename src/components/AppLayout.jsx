@@ -323,7 +323,7 @@ export function AppLayout({
       <button
         type="button"
         onClick={() => setSettingsOpen(true)}
-        className="fixed bottom-5 left-5 z-40 rounded-full border border-white/10 bg-black/40 px-4 py-3 text-[10px] font-bold uppercase tracking-[0.45em] text-white/80 opacity-40 transition hover:opacity-100"
+        className="fixed bottom-5 left-5 z-40 rounded-full border border-white/10 bg-black/70 px-4 py-3 text-[10px] font-bold uppercase tracking-[0.45em] text-white shadow-lg transition hover:bg-black/85 hover:opacity-100 lg:bg-black/40 lg:opacity-40"
         title="Settings"
       >
         settings
@@ -441,9 +441,9 @@ function SyncIndicator({ status, lastSynced, onForceSync }) {
     : 'never';
 
   return (
-    <button
-      type="button"
-      onClick={onForceSync}
+      <button
+        type="button"
+        onClick={onForceSync}
       className={`relative flex w-full flex-nowrap items-center justify-between gap-3 whitespace-nowrap rounded-2xl px-4 py-3 text-left text-xs font-bold uppercase tracking-[0.35em] leading-none transition ${statusClass}`}
       title={`Last synced ${label}`}
     >
