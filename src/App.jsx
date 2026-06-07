@@ -12,6 +12,17 @@ import { useCloudSync } from './hooks/useCloudSync';
 
 const NAV_ITEMS = ['dashboard', 'clients', 'leads', 'receipts', 'financials'];
 const TEST_DATA_WIPED_KEY = 'freelanceos.testDataWiped';
+const THEME_STORAGE_KEY = 'freelanceos.theme';
+const MODE_STORAGE_KEY = 'freelanceos.mode';
+
+function getStoredSetting(key, fallback) {
+  if (typeof window === 'undefined') {
+    return fallback;
+  }
+
+  const value = window.localStorage.getItem(key);
+  return value ?? fallback;
+}
 
 function useWipeDemoDataOnce() {
   useEffect(() => {
@@ -46,6 +57,34 @@ export function App() {
   const [activeView, setActiveView] = useState('dashboard');
   const [selectedClientId, setSelectedClientId] = useState(null);
   const [quickAddOpen, setQuickAddOpen] = useState(false);
+  const [theme, setTheme] = useState(() => getStoredSetting(THEME_STORAGE_KEY, 'neonos'));
+  const [mode, setMode] = useState(() => getStoredSetting(MODE_STORAGE_KEY, 'dark'));
+  const resetLocalData = () => {
+    window.localStorage.removeItem(TEST_DATA_WIPED_KEY);
+    void db.transaction('rw', db.leads, db.clients, db.financials, db.gamification, db.receipts, db.commsTracker, async () => {
+      await Promise.all([
+        db.leads.clear(),
+        db.clients.clear(),
+        db.financials.clear(),
+        db.gamification.clear(),
+        db.receipts.clear(),
+        db.commsTracker.clear(),
+      ]);
+    });
+  };
+
+  useEffect(() => {
+    window.localStorage.setItem(THEME_STORAGE_KEY, theme);
+  }, [theme]);
+
+  useEffect(() => {
+    window.localStorage.setItem(MODE_STORAGE_KEY, mode);
+  }, [mode]);
+
+  useEffect(() => {
+    document.documentElement.dataset.theme = theme;
+    document.documentElement.dataset.mode = mode;
+  }, [theme, mode]);
 
   useEffect(() => {
     if (activeView !== 'clients' || selectedClientId) {
@@ -71,6 +110,11 @@ export function App() {
         lastSynced={lastSynced}
         onForceSync={forceSync}
         onQuickAddOpen={() => setQuickAddOpen(true)}
+        theme={theme}
+        mode={mode}
+        onThemeChange={setTheme}
+        onModeChange={setMode}
+        onResetLocalData={resetLocalData}
       >
         {activeView === 'dashboard' && (
           <Dashboard clients={clients ?? []} financials={financials ?? []} onOpenClient={handleOpenClient} />

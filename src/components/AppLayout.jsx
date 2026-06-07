@@ -195,7 +195,7 @@ function QuoteBar() {
 
 function LogoMark() {
   return (
-    <svg width="40" height="40" viewBox="0 0 40 40" fill="currentColor" xmlns="http://www.w3.org/2000/svg" className="mb-2 text-[#c4ff0e]">
+    <svg width="40" height="40" viewBox="0 0 40 40" fill="currentColor" xmlns="http://www.w3.org/2000/svg" className="mb-2 text-white">
       <rect x="4" y="4" width="12" height="32" />
       <rect x="20" y="4" width="16" height="10" />
       <rect x="20" y="18" width="10" height="8" />
@@ -211,15 +211,22 @@ export function AppLayout({
   lastSynced,
   onForceSync,
   onQuickAddOpen,
+  theme,
+  mode,
+  onThemeChange,
+  onModeChange,
+  onResetLocalData,
   children,
 }) {
+  const [settingsOpen, setSettingsOpen] = useState(false);
+
   return (
-    <div className="relative min-h-screen overflow-hidden bg-black text-neutral-100">
+    <div className="relative min-h-screen overflow-hidden bg-[var(--app-bg)] text-[var(--app-text)]">
       <div className="relative mx-auto flex min-h-screen max-w-[1600px] gap-4 px-4 py-4 sm:px-6 lg:px-8">
-        <aside className="hidden w-[320px] shrink-0 flex-col gap-4 bg-black/90 p-4 lg:flex">
-          <div className="bg-white/[0.04] p-4">
+        <aside className="hidden w-[320px] shrink-0 flex-col gap-4 bg-[var(--panel-bg)] p-4 lg:flex">
+          <div className="rounded-3xl bg-[var(--card-bg)] p-4 shadow-[var(--card-shadow)]">
             <LogoMark />
-            <h1 className="mt-3 font-serif text-5xl leading-[0.92] tracking-[0.08em] text-neon-green">
+            <h1 className="mt-2 max-w-[10ch] font-serif text-[2.55rem] leading-[0.92] tracking-[0.02em] text-neon-green">
               FreelanceOS
             </h1>
           </div>
@@ -248,7 +255,7 @@ export function AppLayout({
             })}
           </nav>
 
-          <div className="bg-white/[0.04] p-4">
+          <div className="rounded-3xl bg-[var(--card-bg)] p-4 shadow-[var(--card-shadow)]">
             <p className="text-[10px] uppercase tracking-[0.7em] text-neutral-500">[ QUICK ADD ]</p>
             <button
               type="button"
@@ -263,7 +270,7 @@ export function AppLayout({
         </aside>
 
         <div className="min-w-0 flex-1">
-          <header className="mb-4 flex items-center justify-between bg-white/[0.04] px-4 py-3 lg:hidden">
+          <header className="mb-4 flex items-center justify-between rounded-3xl bg-[var(--card-bg)] px-4 py-3 shadow-[var(--card-shadow)] lg:hidden">
             <div>
               <div className="mt-1 text-xs uppercase tracking-[0.45em] text-neon-green">{LABELS[activeView] ?? activeView}</div>
             </div>
@@ -285,10 +292,10 @@ export function AppLayout({
                   type="button"
                   onClick={() => onViewChange(item)}
                   className={[
-                    'px-3 py-3 text-[10px] font-bold uppercase tracking-[0.45em] transition',
+                    'rounded-2xl px-3 py-3 text-[10px] font-bold uppercase tracking-[0.45em] transition',
                     active
                       ? 'bg-neon-green text-black'
-                      : 'bg-white/[0.04] text-neutral-300 hover:bg-white/[0.08]',
+                      : 'bg-[var(--card-bg)] text-[var(--muted-text)] hover:bg-[var(--card-hover)] hover:text-[var(--app-text)]',
                   ].join(' ')}
                 >
                   {LABELS[item] ?? item}
@@ -297,7 +304,7 @@ export function AppLayout({
             })}
           </nav>
 
-          <main className="bg-white/[0.02] p-4 sm:p-6">
+          <main className="rounded-[2rem] bg-[var(--surface-bg)] p-4 shadow-[var(--card-shadow)] sm:p-6">
             {children}
           </main>
 
@@ -312,7 +319,99 @@ export function AppLayout({
       >
         quick add
       </button>
+
+      <button
+        type="button"
+        onClick={() => setSettingsOpen(true)}
+        className="fixed bottom-5 left-5 z-40 rounded-full border border-white/10 bg-black/40 px-4 py-3 text-[10px] font-bold uppercase tracking-[0.45em] text-white/80 opacity-40 transition hover:opacity-100"
+        title="Settings"
+      >
+        settings
+      </button>
+
+      {settingsOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-4 py-6 backdrop-blur-sm">
+          <div className="w-full max-w-lg rounded-[2rem] border border-white/10 bg-[var(--panel-bg)] p-5 shadow-2xl">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <div className="text-[10px] uppercase tracking-[0.7em] text-neutral-500">[ SETTINGS ]</div>
+                <h2 className="mt-2 font-serif text-3xl text-[var(--app-text)]">System Menu</h2>
+              </div>
+              <button
+                type="button"
+                onClick={() => setSettingsOpen(false)}
+                className="rounded-full bg-white/5 px-3 py-2 text-[10px] uppercase tracking-[0.45em] text-[var(--muted-text)]"
+              >
+                close
+              </button>
+            </div>
+
+            <div className="mt-5 space-y-3">
+              <SettingsButton
+                label="Reset Local Data"
+                description="Clear all local records and restore an empty workspace."
+                onClick={() => {
+                  onResetLocalData();
+                  setSettingsOpen(false);
+                }}
+              />
+              <SettingsButton
+                label={mode === 'light' ? 'Light Mode: On' : 'Light Mode: Off'}
+                description="Switch the app between dark and light presentation."
+                onClick={() => onModeChange(mode === 'light' ? 'dark' : 'light')}
+              />
+
+              <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
+                <div className="text-[10px] uppercase tracking-[0.55em] text-neutral-500">Theme</div>
+                <div className="mt-3 grid gap-2 sm:grid-cols-2">
+                  <ThemeChoice
+                    active={theme === 'neonos'}
+                    title="NeonOS"
+                    description="Current neon terminal look."
+                    onClick={() => onThemeChange('neonos')}
+                  />
+                  <ThemeChoice
+                    active={theme === 'boringos'}
+                    title="BoringOS"
+                    description="Rounded, clean, modern UI."
+                    onClick={() => onThemeChange('boringos')}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
+  );
+}
+
+function SettingsButton({ label, description, onClick }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="w-full rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-4 text-left transition hover:bg-white/[0.08]"
+    >
+      <div className="text-sm font-bold text-[var(--app-text)]">{label}</div>
+      <div className="mt-1 text-xs text-[var(--muted-text)]">{description}</div>
+    </button>
+  );
+}
+
+function ThemeChoice({ active, title, description, onClick }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={[
+        'rounded-2xl border px-4 py-4 text-left transition',
+        active ? 'border-neon-green bg-neon-green/10' : 'border-white/10 bg-white/[0.03] hover:bg-white/[0.06]',
+      ].join(' ')}
+    >
+      <div className="text-sm font-bold text-[var(--app-text)]">{title}</div>
+      <div className="mt-1 text-xs text-[var(--muted-text)]">{description}</div>
+    </button>
   );
 }
 
@@ -345,7 +444,7 @@ function SyncIndicator({ status, lastSynced, onForceSync }) {
     <button
       type="button"
       onClick={onForceSync}
-      className={`relative flex w-full flex-nowrap items-center justify-between gap-3 whitespace-nowrap px-4 py-3 text-left text-xs font-bold uppercase tracking-[0.35em] leading-none transition ${statusClass}`}
+      className={`relative flex w-full flex-nowrap items-center justify-between gap-3 whitespace-nowrap rounded-2xl px-4 py-3 text-left text-xs font-bold uppercase tracking-[0.35em] leading-none transition ${statusClass}`}
       title={`Last synced ${label}`}
     >
       <span className="flex min-w-0 items-center gap-3 whitespace-nowrap">

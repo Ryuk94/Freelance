@@ -19,17 +19,17 @@ body,
 }
 
 html {
-  color-scheme: dark;
+  color-scheme: var(--color-scheme, dark);
 }
 
 body,
 #root {
-  background-color: #000000;
+  background-color: var(--app-bg);
 }
 
 body {
   margin: 0;
-  color: #f5f5f0;
+  color: var(--app-text);
   font-family: 'IBM Plex Mono', ui-monospace, SFMono-Regular, monospace;
   font-size: 15px;
   line-height: 1.6;
@@ -41,6 +41,85 @@ body {
 
 * {
   box-sizing: border-box;
+}
+
+:root {
+  --app-bg: #000000;
+  --app-text: #f5f5f0;
+  --muted-text: #a1a1aa;
+  --panel-bg: rgba(0, 0, 0, 0.9);
+  --card-bg: rgba(255, 255, 255, 0.04);
+  --card-hover: rgba(255, 255, 255, 0.08);
+  --surface-bg: rgba(255, 255, 255, 0.02);
+  --card-shadow: 0 24px 60px rgba(0, 0, 0, 0.22);
+  --color-scheme: dark;
+}
+
+:root[data-theme='boringos'] {
+  --app-bg: #f3f4f6;
+  --app-text: #111827;
+  --muted-text: #6b7280;
+  --panel-bg: rgba(255, 255, 255, 0.9);
+  --card-bg: rgba(255, 255, 255, 0.92);
+  --card-hover: rgba(255, 255, 255, 1);
+  --surface-bg: rgba(255, 255, 255, 0.98);
+  --card-shadow: 0 20px 50px rgba(15, 23, 42, 0.08);
+}
+
+:root[data-mode='light'] {
+  --app-bg: #f7f7f3;
+  --app-text: #111111;
+  --muted-text: #5f6368;
+  --panel-bg: rgba(255, 255, 255, 0.95);
+  --card-bg: rgba(255, 255, 255, 0.96);
+  --card-hover: rgba(255, 255, 255, 1);
+  --surface-bg: rgba(255, 255, 255, 0.99);
+  --color-scheme: light;
+}
+
+:root[data-theme='boringos'][data-mode='light'] {
+  --app-bg: #f7f7f3;
+  --app-text: #111111;
+  --muted-text: #5f6368;
+  --panel-bg: rgba(255, 255, 255, 0.96);
+  --card-bg: rgba(255, 255, 255, 0.98);
+  --card-hover: rgba(255, 255, 255, 1);
+  --surface-bg: rgba(255, 255, 255, 1);
+  --card-shadow: 0 18px 40px rgba(15, 23, 42, 0.08);
+}
+
+:root[data-theme='boringos'] .text-neon-green {
+  color: #2563eb;
+}
+
+:root[data-theme='boringos'] .bg-neon-green {
+  background-color: #dbeafe;
+}
+
+:root[data-theme='boringos'] .text-neon-red {
+  color: #b91c1c;
+}
+
+:root[data-theme='boringos'] .bg-neon-red {
+  background-color: #fee2e2;
+}
+
+:root[data-theme='boringos'] .hover\:bg-neon-green\/90:hover {
+  background-color: #bfdbfe;
+}
+
+:root[data-theme='boringos'] .hover\:bg-neon-red\/90:hover {
+  background-color: #fecaca;
+}
+
+:root[data-theme='boringos'] .shadow-\[var\(--card-shadow\)\] {
+  box-shadow: 0 20px 50px rgba(15, 23, 42, 0.08);
+}
+
+:root[data-theme='boringos'] .rounded-3xl,
+:root[data-theme='boringos'] .rounded-\[2rem\],
+:root[data-theme='boringos'] .rounded-2xl {
+  border-radius: 1.25rem;
 }
 
 button,
