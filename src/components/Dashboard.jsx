@@ -261,24 +261,21 @@ export function Dashboard({ clients, financials, onOpenClient }) {
             onClick={() => setSelectedWidget(widgetId)}
             className={[
               'relative min-w-0 rounded-xl px-2 py-1 sm:px-3 sm:py-2',
-              selected ? 'bg-black text-[#c4ff0e]' : 'text-[var(--app-text)]',
+              selected ? 'bg-black text-[var(--app-text)]' : 'text-[var(--app-text)]',
             ].join(' ')}
           >
-            <div className="space-y-2.5">
-              <div className={`text-[10px] uppercase tracking-[0.7em] ${selected ? 'text-[#c4ff0e]/60' : 'text-neutral-500'}`}>[ {greeting} ]</div>
-              <div className={`font-serif text-[1.7rem] uppercase tracking-[0.02em] sm:text-[2.15rem] ${selected ? 'text-[#c4ff0e]' : 'text-[var(--app-text)]'}`}>{todayLabel}</div>
-              <p className={`max-w-4xl text-[11px] leading-6 sm:text-sm sm:leading-7 ${selected ? 'text-[#c4ff0e]/90' : 'text-[var(--app-text)]'}`}>
-                {activeClients.length === 0 && unpaidInvoices.length === 0
-                  ? 'The air is still. A small signal can shift the whole board if you send it first.'
-                  : `You have ${activeClients.length} active clients and ${unpaidInvoices.length} open invoices worth ${formatCurrency(unpaidAmount)}. Current burn rate is ${burnRate}%.`}
-              </p>
-              <div className={`text-[10px] uppercase tracking-[0.38em] sm:text-sm sm:tracking-[0.24em] ${selected ? 'text-[#c4ff0e]/75' : 'text-neutral-300'}`}>
+            <div className="space-y-3">
+              <div className="font-serif text-[2.15rem] uppercase tracking-[0.02em] text-[var(--app-text)] sm:text-[3.1rem]">{todayLabel}</div>
+              <p className="max-w-4xl text-[11px] leading-6 text-[var(--app-text)] sm:text-sm sm:leading-7">
                 {greeting === 'GOOD MORNING'
-                  ? 'Start clean. Wake the system carefully.'
+                  ? 'Good morning. Start clean and wake the system carefully.'
                   : greeting === 'GOOD AFTERNOON'
-                    ? 'Keep the signal sharp. Finish the next precise move.'
-                    : 'The work slows down. The signal should not.'}
-              </div>
+                    ? 'Good afternoon. Keep the signal sharp and finish the next precise move.'
+                    : 'Good evening. The work slows down, but the signal should not.'}
+                {activeClients.length === 0 && unpaidInvoices.length === 0
+                  ? ' The air is still. A small signal can shift the whole board if you send it first.'
+                  : ` You have ${activeClients.length} active clients and ${unpaidInvoices.length} open invoices worth ${formatCurrency(unpaidAmount)}. Current burn rate is ${burnRate}%.`}
+              </p>
             </div>
           </section>
         );
@@ -341,7 +338,7 @@ export function Dashboard({ clients, financials, onOpenClient }) {
         );
       case 'calendar':
         return (
-          <Panel key={widgetId} title="Calendar" eyebrow="[ EVENTS ]" showHeader={false} {...common} draggable>
+          <Panel key={widgetId} title="Calendar" eyebrow="[ EVENTS ]" {...common} draggable>
             <CalendarWidget clients={clients} selected={selected} />
             {selected && <div className="absolute bottom-4 right-4 opacity-60"><StatusGlyph /></div>}
           </Panel>
