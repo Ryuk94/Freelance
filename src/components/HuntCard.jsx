@@ -3,7 +3,7 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../db';
 import { useGamification } from '../hooks/useGamification';
 
-export function HuntCard() {
+export function HuntCard({ selected = false }) {
   const leads = useLiveQuery(
     () => db.leads.where('status').equals('hunting').filter((lead) => !lead.isDeleted).sortBy('createdAt'),
     [],
@@ -46,17 +46,17 @@ export function HuntCard() {
   };
 
   return (
-    <section className="bg-white/[0.03] p-5">
+    <section className={`h-full rounded-xl border p-5 ${selected ? 'border-black/20 bg-black text-[#c4ff0e]' : 'border-neutral-800 bg-white/[0.03]'}`}>
       <div className="mb-4 relative">
-        <div className="text-[10px] uppercase tracking-[0.7em] text-neutral-500">[ THE HUNT ]</div>
-        <h2 className="mt-2 font-serif text-3xl font-black uppercase tracking-[0.08em] text-neon-green">Next Follow-Ups</h2>
+        <div className={`text-[10px] uppercase tracking-[0.7em] ${selected ? 'text-black/60' : 'text-neutral-500'}`}>[ THE HUNT ]</div>
+        <h2 className={`mt-2 font-serif text-3xl font-black uppercase tracking-[0.08em] ${selected ? 'text-[#c4ff0e]' : 'text-[#c4ff0e]'}`}>Next Follow-Ups</h2>
       </div>
 
       <div className="space-y-2">
         {huntQueue.length === 0 ? (
-          <div className="bg-black/40 px-4 py-3 text-xs uppercase tracking-[0.45em] text-neutral-500">
-            queue empty
-          </div>
+            <div className={`px-4 py-3 text-xs uppercase tracking-[0.45em] ${selected ? 'border border-black/20 bg-black text-black/70' : 'bg-black/40 text-neutral-500'}`}>
+              queue empty
+            </div>
         ) : (
           huntQueue.map((lead) => {
             const isChecked = checkedIds.includes(lead.id);
@@ -67,8 +67,10 @@ export function HuntCard() {
                 className={[
                   'flex cursor-pointer items-center gap-3 px-4 py-3 transition',
                   isChecked
-                    ? 'bg-neon-green text-black'
-                    : 'bg-white/[0.05] text-neutral-300 hover:bg-white/[0.1] hover:text-white',
+                    ? 'bg-[#c4ff0e] text-black'
+                    : selected
+                      ? 'bg-black text-black/75 hover:bg-black/80 hover:text-[#c4ff0e]'
+                      : 'bg-white/[0.05] text-neutral-300 hover:bg-white/[0.1] hover:text-white',
                 ].join(' ')}
               >
                 <input
@@ -76,7 +78,7 @@ export function HuntCard() {
                   checked={isChecked}
                   disabled={isChecked}
                   onChange={() => markDone(lead)}
-                  className="h-5 w-5 rounded-none border border-neon-green/40 bg-black text-neon-green accent-neon-green"
+                  className={`h-5 w-5 rounded-none border ${selected ? 'border-black/30 bg-black text-[#c4ff0e] accent-[#c4ff0e]' : 'border-[#c4ff0e]/40 bg-black text-[#c4ff0e] accent-[#c4ff0e]'}`}
                 />
                 <div className="min-w-0">
                   <div className="truncate text-sm font-bold uppercase tracking-[0.35em] text-inherit">

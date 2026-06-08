@@ -45,6 +45,7 @@ function Panel({
   children,
   className = '',
   selected = false,
+  showHeader = true,
   onClick,
   onDoubleClick,
   onDragStart,
@@ -65,21 +66,26 @@ function Panel({
       onDoubleClick={onDoubleClick}
       className={[
         'relative min-w-0 overflow-hidden rounded-xl border border-neutral-800 bg-neutral-900/80 p-5 shadow-[var(--card-shadow)] transition',
+        'h-full',
         selected ? 'bg-[#c4ff0e] text-black ring-1 ring-[#c4ff0e]' : '',
         span,
         className,
       ].join(' ')}
     >
-      <div className="mb-4">
-        <div className={`text-[10px] uppercase tracking-[0.7em] ${selected ? 'text-black/60' : 'text-neutral-500'}`}>{eyebrow}</div>
-        <h2 className={`mt-2 font-serif text-2xl uppercase tracking-[0.08em] ${selected ? 'text-black' : 'text-[var(--app-text)]'}`}>{title}</h2>
+      {showHeader ? (
+        <div className="mb-4">
+          <div className={`text-[10px] uppercase tracking-[0.7em] ${selected ? 'text-black/60' : 'text-neutral-500'}`}>{eyebrow}</div>
+          <h2 className={`mt-2 font-serif text-2xl uppercase tracking-[0.08em] ${selected ? 'text-black' : 'text-[var(--app-text)]'}`}>{title}</h2>
+        </div>
+      ) : null}
+      <div className={`min-h-0 flex-1 ${showHeader ? '' : 'pt-0'}`}>
+        {children}
       </div>
-      {children}
     </article>
   );
 }
 
-function MoneyCycler({ financials }) {
+function MoneyCycler({ financials, selected = false }) {
   const [currentMonth, setCurrentMonth] = useState(() => new Date());
   const monthLabel = useMemo(() => currentMonth.toLocaleDateString('en-GB', { month: 'long', year: 'numeric' }).toUpperCase(), [currentMonth]);
   const monthStats = useMemo(() => {
@@ -89,21 +95,21 @@ function MoneyCycler({ financials }) {
   }, [currentMonth, financials]);
 
   return (
-    <div className="relative">
+    <div className={`relative h-full rounded-xl border p-4 ${selected ? 'border-black/20 bg-black text-[#c4ff0e]' : 'border-neutral-800 bg-black/35 text-[var(--app-text)]'}`}>
       <div className="flex items-start justify-between gap-4">
         <div>
-          <div className="text-[10px] uppercase tracking-[0.7em] text-neutral-500">[ MONEY ]</div>
-          <div className="mt-2 text-sm uppercase tracking-[0.35em] text-neutral-400">Expected Earnings</div>
+          <div className={`text-[10px] uppercase tracking-[0.7em] ${selected ? 'text-black/60' : 'text-neutral-500'}`}>[ MONEY ]</div>
+          <div className={`mt-2 text-sm uppercase tracking-[0.35em] ${selected ? 'text-black/70' : 'text-neutral-400'}`}>Expected Earnings</div>
         </div>
         <div className="flex gap-2">
-          <button type="button" onClick={() => setCurrentMonth((current) => shiftMonth(current, -1))} className="rounded-xl border border-neutral-700 bg-white/[0.03] px-3 py-2 text-xs font-bold uppercase tracking-[0.45em] text-[#c4ff0e]">&lt;</button>
-          <button type="button" onClick={() => setCurrentMonth((current) => shiftMonth(current, 1))} className="rounded-xl border border-neutral-700 bg-white/[0.03] px-3 py-2 text-xs font-bold uppercase tracking-[0.45em] text-[#c4ff0e]">&gt;</button>
+          <button type="button" onClick={() => setCurrentMonth((current) => shiftMonth(current, -1))} className={`rounded-xl border px-3 py-2 text-xs font-bold uppercase tracking-[0.45em] ${selected ? 'border-black/30 bg-black text-[#c4ff0e]' : 'border-neutral-700 bg-white/[0.03] text-[#c4ff0e]'}`}>&lt;</button>
+          <button type="button" onClick={() => setCurrentMonth((current) => shiftMonth(current, 1))} className={`rounded-xl border px-3 py-2 text-xs font-bold uppercase tracking-[0.45em] ${selected ? 'border-black/30 bg-black text-[#c4ff0e]' : 'border-neutral-700 bg-white/[0.03] text-[#c4ff0e]'}`}>&gt;</button>
         </div>
       </div>
-      <div className="mt-5 rounded-2xl border border-neutral-800 bg-black/35 px-4 py-5">
-        <div className="text-[10px] uppercase tracking-[0.7em] text-neutral-500">{monthLabel}</div>
+      <div className={`mt-5 rounded-xl border px-4 py-5 ${selected ? 'border-black/20 bg-black' : 'border-neutral-800 bg-black/35'}`}>
+        <div className={`text-[10px] uppercase tracking-[0.7em] ${selected ? 'text-black/60' : 'text-neutral-500'}`}>{monthLabel}</div>
         <div className="mt-3 font-mono text-5xl font-bold leading-none tracking-[0.24em] tabular-nums text-[#c4ff0e]">{formatCurrency(monthStats.expectedEarnings)}</div>
-        <div className="mt-3 flex items-center justify-between text-[10px] uppercase tracking-[0.45em] text-neutral-500">
+        <div className={`mt-3 flex items-center justify-between text-[10px] uppercase tracking-[0.45em] ${selected ? 'text-black/60' : 'text-neutral-500'}`}>
           <span>{monthStats.invoices.length} invoices</span>
           <span>draft + sent</span>
         </div>
@@ -281,8 +287,8 @@ export function Dashboard({ clients, financials, onOpenClient }) {
         );
       case 'xp':
         return (
-          <Panel key={widgetId} title="XP / Level" eyebrow="[ THE PULSE ]" {...common} draggable>
-            <XpLevelCard />
+          <Panel key={widgetId} title="XP / Level" eyebrow="[ THE PULSE ]" showHeader={false} {...common} draggable>
+            <XpLevelCard selected={selected} />
           </Panel>
         );
       case 'clients':
@@ -304,29 +310,29 @@ export function Dashboard({ clients, financials, onOpenClient }) {
         );
       case 'hunt':
         return (
-          <Panel key={widgetId} title="Next Follow-Ups" eyebrow="[ THE HUNT ]" {...common} draggable>
-            <HuntCard />
+          <Panel key={widgetId} title="Next Follow-Ups" eyebrow="[ THE HUNT ]" showHeader={false} {...common} draggable>
+            <HuntCard selected={selected} />
             {selected && <div className="absolute bottom-4 right-4 opacity-60"><StatusGlyph /></div>}
           </Panel>
         );
       case 'comms':
         return (
-          <Panel key={widgetId} title="Slacking Tracker" eyebrow="[ COMMS ]" {...common} draggable>
-            <CommsTracker />
+          <Panel key={widgetId} title="Slacking Tracker" eyebrow="[ COMMS ]" showHeader={false} {...common} draggable>
+            <CommsTracker selected={selected} />
             {selected && <div className="absolute bottom-4 right-4 opacity-60"><StatusGlyph /></div>}
           </Panel>
         );
       case 'money':
         return (
-          <Panel key={widgetId} title="Expected Earnings" eyebrow="[ MONEY ]" {...common} draggable>
-            <MoneyCycler financials={financials} />
+          <Panel key={widgetId} title="Expected Earnings" eyebrow="[ MONEY ]" showHeader={false} {...common} draggable>
+            <MoneyCycler financials={financials} selected={selected} />
             {selected && <div className="absolute bottom-4 right-4 opacity-60"><StatusGlyph /></div>}
           </Panel>
         );
       case 'calendar':
         return (
-          <Panel key={widgetId} title="Calendar" eyebrow="[ EVENTS ]" {...common} draggable>
-            <CalendarWidget clients={clients} />
+          <Panel key={widgetId} title="Calendar" eyebrow="[ EVENTS ]" showHeader={false} {...common} draggable>
+            <CalendarWidget clients={clients} selected={selected} />
             {selected && <div className="absolute bottom-4 right-4 opacity-60"><StatusGlyph /></div>}
           </Panel>
         );
@@ -337,7 +343,7 @@ export function Dashboard({ clients, financials, onOpenClient }) {
 
   return (
     <div className="space-y-4">
-      <div className="grid gap-4 2xl:grid-cols-4">
+      <div className="grid auto-rows-[22rem] gap-4 2xl:grid-cols-4">
         {widgetOrder
           .filter((widgetId) => widgetVisibility[widgetId] !== false)
           .map((widgetId) => (

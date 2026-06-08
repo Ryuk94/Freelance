@@ -38,25 +38,25 @@ function StatusModule({ value = '1', label = 'S' }) {
   );
 }
 
-function CommsCard({ row, onLogCheck }) {
+function CommsCard({ row, onLogCheck, selected = false }) {
   const stale = !row.lastChecked || Date.now() - row.lastChecked > DAY_MS;
   const statusText = stale ? 'check overdue' : 'checked within 24h';
 
   return (
-    <div className="relative overflow-hidden rounded-2xl border border-neutral-800 bg-neutral-900/80 px-4 py-4 text-[var(--app-text)] shadow-[var(--card-shadow)]">
+    <div className={`relative overflow-hidden rounded-xl border px-4 py-4 shadow-[var(--card-shadow)] ${selected ? 'border-black/20 bg-black text-[#c4ff0e]' : 'border-neutral-800 bg-neutral-900/80 text-[var(--app-text)]'}`}>
       <StatusModule value={stale ? 'O' : '0'} label="C" />
       <div className="flex items-start justify-between gap-4">
         <div>
-          <div className="text-[10px] uppercase tracking-[0.7em] text-neutral-500">[{row.platform.toUpperCase()}]</div>
-          <div className="mt-2 text-sm font-bold uppercase tracking-[0.35em] text-[var(--app-text)]">{statusText}</div>
+          <div className={`text-[10px] uppercase tracking-[0.7em] ${selected ? 'text-black/60' : 'text-neutral-500'}`}>[{row.platform.toUpperCase()}]</div>
+          <div className={`mt-2 text-sm font-bold uppercase tracking-[0.35em] ${selected ? 'text-black' : 'text-[var(--app-text)]'}`}>{statusText}</div>
         </div>
-        <div className="text-right text-[10px] uppercase tracking-[0.45em] text-neutral-500">{formatLastChecked(row.lastChecked)}</div>
+        <div className={`text-right text-[10px] uppercase tracking-[0.45em] ${selected ? 'text-black/70' : 'text-neutral-500'}`}>{formatLastChecked(row.lastChecked)}</div>
       </div>
 
       <button
         type="button"
         onClick={() => onLogCheck(row.id)}
-        className="mt-4 rounded-xl border border-neutral-700 bg-white/[0.03] px-4 py-3 text-xs font-bold uppercase tracking-[0.55em] text-[#c4ff0e] transition hover:bg-white/[0.06]"
+        className={`mt-4 rounded-xl border px-4 py-3 text-xs font-bold uppercase tracking-[0.55em] transition ${selected ? 'border-black/20 bg-black text-[#c4ff0e] hover:bg-black/80' : 'border-neutral-700 bg-white/[0.03] text-[#c4ff0e] hover:bg-white/[0.06]'}`}
       >
         log check
       </button>
@@ -64,7 +64,7 @@ function CommsCard({ row, onLogCheck }) {
   );
 }
 
-export function CommsTracker() {
+export function CommsTracker({ selected = false }) {
   const rows = useLiveQuery(() => db.commsTracker.filter((row) => !row.isDeleted).toArray(), []);
 
   const handleLogCheck = async (id) => {
@@ -82,22 +82,22 @@ export function CommsTracker() {
   const activeRows = rows ?? [];
 
   return (
-    <section className="rounded-2xl border border-neutral-800 bg-neutral-900/70 p-5 shadow-[var(--card-shadow)]">
+    <section className={`h-full rounded-xl border p-5 shadow-[var(--card-shadow)] ${selected ? 'border-black/20 bg-black text-[#c4ff0e]' : 'border-neutral-800 bg-neutral-900/70 text-[var(--app-text)]'}`}>
       <div className="mb-4 flex items-end justify-between gap-4">
         <div>
-          <div className="text-[10px] uppercase tracking-[0.7em] text-neutral-500">[ COMMS ]</div>
-          <h2 className="mt-2 font-serif text-3xl uppercase tracking-[0.08em] text-[var(--app-text)]">Slacking Tracker</h2>
+          <div className={`text-[10px] uppercase tracking-[0.7em] ${selected ? 'text-black/60' : 'text-neutral-500'}`}>[ COMMS ]</div>
+          <h2 className={`mt-2 font-serif text-3xl uppercase tracking-[0.08em] ${selected ? 'text-[#c4ff0e]' : 'text-[var(--app-text)]'}`}>Slacking Tracker</h2>
         </div>
       </div>
 
       {activeRows.length > 0 ? (
         <div className="grid gap-3 lg:grid-cols-2">
           {activeRows.map((row) => (
-            <CommsCard key={row.id} row={row} onLogCheck={handleLogCheck} />
+            <CommsCard key={row.id} row={row} onLogCheck={handleLogCheck} selected={selected} />
           ))}
         </div>
       ) : (
-        <div className="rounded-xl border border-neutral-800 bg-black/35 px-4 py-4 text-[10px] uppercase tracking-[0.45em] text-neutral-500">
+        <div className={`rounded-xl border px-4 py-4 text-[10px] uppercase tracking-[0.45em] ${selected ? 'border-black/20 bg-black text-black/70' : 'border-neutral-800 bg-black/35 text-neutral-500'}`}>
           no comms checks logged yet
         </div>
       )}

@@ -15,7 +15,7 @@ function formatDate(value) {
   });
 }
 
-export function CalendarWidget({ clients }) {
+export function CalendarWidget({ clients, selected = false }) {
   const events = useLiveQuery(() => db.events.filter((event) => !event.isDeleted).toArray(), []);
   const showToast = useToast();
   const [title, setTitle] = useState('');
@@ -71,35 +71,35 @@ export function CalendarWidget({ clients }) {
   };
 
   return (
-    <section className="space-y-4">
+    <section className={`flex h-full flex-col space-y-4 rounded-xl border p-5 ${selected ? 'border-black/20 bg-black text-[#c4ff0e]' : 'border-neutral-800 bg-neutral-900/70 text-[var(--app-text)]'}`}>
       <div className="grid gap-3 lg:grid-cols-2">
         <label className="space-y-2">
-          <span className="text-[10px] uppercase tracking-[0.45em] text-neutral-500">Title</span>
+          <span className={`text-[10px] uppercase tracking-[0.45em] ${selected ? 'text-black/60' : 'text-neutral-500'}`}>Title</span>
           <input
             value={title}
             onChange={(event) => setTitle(event.target.value)}
             placeholder="Client meeting"
-            className="w-full rounded-xl border border-neutral-800 bg-black/35 px-3 py-3 text-xs text-[var(--app-text)] outline-none placeholder:text-neutral-600"
+            className={`w-full rounded-xl border px-3 py-3 text-xs outline-none placeholder:text-neutral-600 ${selected ? 'border-black/20 bg-black text-[#c4ff0e]' : 'border-neutral-800 bg-black/35 text-[var(--app-text)]'}`}
           />
         </label>
         <label className="space-y-2">
-          <span className="text-[10px] uppercase tracking-[0.45em] text-neutral-500">Date</span>
+          <span className={`text-[10px] uppercase tracking-[0.45em] ${selected ? 'text-black/60' : 'text-neutral-500'}`}>Date</span>
           <input
             type="date"
             value={date}
             onChange={(event) => setDate(event.target.value)}
-            className="w-full rounded-xl border border-neutral-800 bg-black/35 px-3 py-3 text-xs text-[var(--app-text)] outline-none"
+            className={`w-full rounded-xl border px-3 py-3 text-xs outline-none ${selected ? 'border-black/20 bg-black text-[#c4ff0e]' : 'border-neutral-800 bg-black/35 text-[var(--app-text)]'}`}
           />
         </label>
       </div>
 
       <div className="grid gap-3 lg:grid-cols-[1fr_auto]">
         <label className="space-y-2">
-          <span className="text-[10px] uppercase tracking-[0.45em] text-neutral-500">Client</span>
+          <span className={`text-[10px] uppercase tracking-[0.45em] ${selected ? 'text-black/60' : 'text-neutral-500'}`}>Client</span>
           <select
             value={clientId}
             onChange={(event) => setClientId(event.target.value)}
-            className="w-full rounded-xl border border-neutral-800 bg-black/35 px-3 py-3 text-xs text-[var(--app-text)] outline-none"
+            className={`w-full rounded-xl border px-3 py-3 text-xs outline-none ${selected ? 'border-black/20 bg-black text-[#c4ff0e]' : 'border-neutral-800 bg-black/35 text-[var(--app-text)]'}`}
           >
             <option value="global">Global Event</option>
             {(clients ?? []).map((client) => (
@@ -109,21 +109,21 @@ export function CalendarWidget({ clients }) {
             ))}
           </select>
         </label>
-        <label className="flex items-end gap-2 rounded-xl border border-neutral-800 bg-black/35 px-3 py-3">
+        <label className={`flex items-end gap-2 rounded-xl border px-3 py-3 ${selected ? 'border-black/20 bg-black' : 'border-neutral-800 bg-black/35'}`}>
           <input
             type="checkbox"
             checked={allDay}
             onChange={(event) => setAllDay(event.target.checked)}
             className="h-4 w-4 accent-[#c4ff0e]"
           />
-          <span className="text-[10px] uppercase tracking-[0.45em] text-neutral-400">All day</span>
+          <span className={`text-[10px] uppercase tracking-[0.45em] ${selected ? 'text-black/60' : 'text-neutral-400'}`}>All day</span>
         </label>
       </div>
 
       <button
         type="button"
         onClick={handleAddEvent}
-        className="rounded-xl border border-neutral-700 bg-[#c4ff0e]/10 px-4 py-3 text-xs font-bold uppercase tracking-[0.55em] text-[#c4ff0e] transition hover:bg-[#c4ff0e]/20"
+        className={`rounded-xl border px-4 py-3 text-xs font-bold uppercase tracking-[0.55em] transition ${selected ? 'border-black/20 bg-black text-[#c4ff0e] hover:bg-black/80' : 'border-neutral-700 bg-[#c4ff0e]/10 text-[#c4ff0e] hover:bg-[#c4ff0e]/20'}`}
       >
         add event
       </button>
@@ -133,17 +133,17 @@ export function CalendarWidget({ clients }) {
           upcomingEvents.map((event) => {
             const client = (clients ?? []).find((item) => item.id === event.clientId);
             return (
-              <div key={event.id} className="flex items-center justify-between gap-3 rounded-xl border border-neutral-800 bg-black/35 px-4 py-3">
+              <div key={event.id} className={`flex items-center justify-between gap-3 rounded-xl border px-4 py-3 ${selected ? 'border-black/20 bg-black' : 'border-neutral-800 bg-black/35'}`}>
                 <div className="min-w-0">
-                  <div className="truncate text-sm font-bold uppercase tracking-[0.35em] text-[var(--app-text)]">{event.title}</div>
-                  <div className="mt-1 text-[10px] uppercase tracking-[0.45em] text-neutral-500">
+                  <div className={`truncate text-sm font-bold uppercase tracking-[0.35em] ${selected ? 'text-[#c4ff0e]' : 'text-[var(--app-text)]'}`}>{event.title}</div>
+                  <div className={`mt-1 text-[10px] uppercase tracking-[0.45em] ${selected ? 'text-black/60' : 'text-neutral-500'}`}>
                     {client ? client.name : 'global'} / {formatDate(event.date)}
                   </div>
                 </div>
                 <button
                   type="button"
                   onClick={() => handleDeleteEvent(event.id)}
-                  className="rounded-xl border border-neutral-800 bg-white/[0.04] px-3 py-2 text-[10px] font-bold uppercase tracking-[0.45em] text-[#f97316]"
+                  className={`rounded-xl border px-3 py-2 text-[10px] font-bold uppercase tracking-[0.45em] ${selected ? 'border-black/20 bg-black text-[#f97316]' : 'border-neutral-800 bg-white/[0.04] text-[#f97316]'}`}
                 >
                   remove
                 </button>
@@ -151,7 +151,7 @@ export function CalendarWidget({ clients }) {
             );
           })
         ) : (
-          <div className="rounded-xl border border-dashed border-neutral-800 bg-black/25 px-4 py-4 text-[10px] uppercase tracking-[0.45em] text-neutral-500">
+          <div className={`rounded-xl border border-dashed px-4 py-4 text-[10px] uppercase tracking-[0.45em] ${selected ? 'border-black/20 bg-black text-black/70' : 'border-neutral-800 bg-black/25 text-neutral-500'}`}>
             no events scheduled
           </div>
         )}
