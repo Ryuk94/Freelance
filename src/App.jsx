@@ -86,6 +86,81 @@ function useInstallPrompt() {
   };
 }
 
+function useServiceWorkerUpdate() {
+  const [updateAvailable, setUpdateAvailable] = useState(false);
+
+  useEffect(() => {
+    if (typeof window === 'undefined' || !('serviceWorker' in navigator)) {
+      return undefined;
+    }
+
+    let registration;
+    let refreshing = false;
+
+    const handleControllerChange = () => {
+      if (refreshing) {
+        return;
+      }
+
+      window.location.reload();
+    };
+
+    const watchForWaitingWorker = (reg) => {
+      registration = reg;
+
+      if (reg.waiting) {
+        setUpdateAvailable(true);
+      }
+
+      reg.addEventListener('updatefound', () => {
+        const installingWorker = reg.installing;
+        if (!installingWorker) {
+          return;
+        }
+
+        installingWorker.addEventListener('statechange', () => {
+          if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
+            setUpdateAvailable(true);
+          }
+        });
+      });
+    };
+
+    navigator.serviceWorker.getRegistration().then((reg) => {
+      if (!reg) {
+        return;
+      }
+
+      watchForWaitingWorker(reg);
+      void reg.update();
+    });
+
+    navigator.serviceWorker.addEventListener('controllerchange', handleControllerChange);
+
+    const intervalId = window.setInterval(() => {
+      void registration?.update?.();
+    }, 30 * 1000);
+
+    const handleRefreshRequest = () => {
+      refreshing = true;
+      window.location.reload();
+    };
+
+    window.addEventListener('app-update-refresh', handleRefreshRequest);
+
+    return () => {
+      window.clearInterval(intervalId);
+      window.removeEventListener('app-update-refresh', handleRefreshRequest);
+      navigator.serviceWorker.removeEventListener('controllerchange', handleControllerChange);
+    };
+  }, []);
+
+  return {
+    updateAvailable,
+    dismissUpdate: () => setUpdateAvailable(false),
+  };
+}
+
 function useReminderNotifications({ leads, financials }) {
   const [enabled, setEnabled] = useState(() => {
     if (typeof window === 'undefined') {
@@ -217,6 +292,7 @@ export function App() {
   const [theme, setTheme] = useState(() => getStoredSetting(THEME_STORAGE_KEY, 'neonos'));
   const [mode, setMode] = useState(() => getStoredSetting(MODE_STORAGE_KEY, 'dark'));
   const installPrompt = useInstallPrompt();
+  const swUpdate = useServiceWorkerUpdate();
   const notifications = useReminderNotifications({ leads: leads ?? [], financials: financials ?? [] });
   const resetLocalData = () => {
     void db.transaction('rw', db.leads, db.clients, db.financials, db.gamification, db.receipts, db.commsTracker, async () => {
@@ -281,6 +357,9 @@ export function App() {
         canInstallApp={installPrompt.canInstall}
         isAppInstalled={installPrompt.isInstalled}
         onInstallApp={installPrompt.promptInstall}
+        updateAvailable={swUpdate.updateAvailable}
+        onRefreshApp={() => window.dispatchEvent(new Event('app-update-refresh'))}
+        onDismissUpdate={swUpdate.dismissUpdate}
         notificationsEnabled={notifications.enabled}
         notificationsPermission={notifications.permission}
         onEnableNotifications={notifications.requestPermission}

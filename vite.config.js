@@ -7,6 +7,17 @@ const isGithubPages = process.env.GITHUB_PAGES === 'true';
 
 export default defineConfig({
   base: isGithubPages ? `/${repoName}/` : './',
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          react: ['react', 'react-dom', 'react-dom/client'],
+          dexie: ['dexie', 'dexie-react-hooks'],
+          vendor: ['@supabase/supabase-js', 'canvas-confetti'],
+        },
+      },
+    },
+  },
   plugins: [
     react(),
     VitePWA({
@@ -19,24 +30,32 @@ export default defineConfig({
         theme_color: '#0a0a0a',
         background_color: '#0a0a0a',
         display: 'standalone',
+        display_override: ['standalone', 'fullscreen', 'minimal-ui', 'browser'],
         scope: isGithubPages ? `/${repoName}/` : '/',
         start_url: isGithubPages ? `/${repoName}/` : '/',
         icons: [
           {
-            src: '/pwa.svg',
-            sizes: 'any',
-            type: 'image/svg+xml'
+            src: '/icon-192.png',
+            sizes: '192x192',
+            type: 'image/png'
+          },
+          {
+            src: '/icon-512.png',
+            sizes: '512x512',
+            type: 'image/png',
+            purpose: 'maskable'
           },
           {
             src: '/pwa.svg',
             sizes: 'any',
-            type: 'image/svg+xml',
-            purpose: 'maskable'
+            type: 'image/svg+xml'
           }
         ]
       },
       workbox: {
-        globPatterns: ['**/*.{js,css,html,ico,png,svg,webmanifest}']
+        globPatterns: ['**/*.{js,css,html,ico,png,svg,webmanifest}'],
+        skipWaiting: true,
+        clientsClaim: true
       }
     })
   ]

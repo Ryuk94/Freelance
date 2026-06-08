@@ -219,6 +219,9 @@ export function AppLayout({
   canInstallApp,
   isAppInstalled,
   onInstallApp,
+  updateAvailable,
+  onRefreshApp,
+  onDismissUpdate,
   notificationsEnabled,
   notificationsPermission,
   onEnableNotifications,
@@ -339,6 +342,30 @@ export function AppLayout({
           </nav>
 
           <main className="rounded-[2rem] bg-[var(--surface-bg)] p-4 pb-20 shadow-[var(--card-shadow)] sm:p-6 sm:pb-20">
+            {updateAvailable ? (
+              <div className="mb-4 flex flex-wrap items-center justify-between gap-3 border border-neon-green/30 bg-neon-green/10 px-4 py-3 text-black">
+                <div className="min-w-0">
+                  <div className="text-[10px] uppercase tracking-[0.55em] text-black/60">[ UPDATE READY ]</div>
+                  <div className="mt-1 text-sm font-bold uppercase tracking-[0.25em] text-black">A newer version is available.</div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={onRefreshApp}
+                    className="bg-black px-3 py-2 text-[10px] font-bold uppercase tracking-[0.45em] text-neon-green transition hover:bg-neutral-950"
+                  >
+                    refresh
+                  </button>
+                  <button
+                    type="button"
+                    onClick={onDismissUpdate}
+                    className="border border-black/20 px-3 py-2 text-[10px] font-bold uppercase tracking-[0.45em] text-black transition hover:bg-black/5"
+                  >
+                    later
+                  </button>
+                </div>
+              </div>
+            ) : null}
             {children}
           </main>
 
