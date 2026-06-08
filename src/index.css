@@ -171,6 +171,18 @@ body {
   border-radius: 0.625rem;
 }
 
+:root[data-theme='neonos'] .rounded-2xl {
+  border-radius: 0.7rem;
+}
+
+:root[data-theme='neonos'] .rounded-xl {
+  border-radius: 0.5rem;
+}
+
+:root[data-theme='neonos'] .rounded-full {
+  border-radius: 9999px;
+}
+
 :root[data-theme='boringos'] .border-white\/10,
 :root[data-theme='boringos'] .border-white\/5 {
   border-color: rgba(255, 255, 255, 0.08);

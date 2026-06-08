@@ -154,10 +154,10 @@ function QuoteBar() {
 
 function LogoMark() {
   return (
-    <svg width="40" height="40" viewBox="0 0 40 40" fill="currentColor" xmlns="http://www.w3.org/2000/svg" className="text-white">
-      <rect x="4" y="4" width="12" height="32" />
-      <rect x="20" y="4" width="16" height="10" />
-      <rect x="20" y="18" width="10" height="8" />
+    <svg width="34" height="34" viewBox="0 0 40 40" fill="currentColor" xmlns="http://www.w3.org/2000/svg" className="text-white">
+      <rect x="5" y="5" width="10" height="30" />
+      <rect x="18" y="5" width="15" height="9" />
+      <rect x="18" y="17" width="9" height="7" />
     </svg>
   );
 }
@@ -291,9 +291,9 @@ export function AppLayout({
     <div className="relative min-h-screen overflow-hidden bg-[var(--app-bg)] text-[var(--app-text)]">
       <div className="relative mx-auto flex min-h-screen max-w-[1600px] gap-4 px-4 py-4 sm:px-6 lg:px-8">
         <aside className="hidden w-[320px] shrink-0 flex-col gap-4 bg-[var(--panel-bg)] p-4 lg:flex">
-          <div className="rounded-2xl border border-neutral-800 bg-[var(--card-bg)] p-4 shadow-[var(--card-shadow)]">
+          <div className="rounded-xl border border-neutral-800 bg-[var(--card-bg)] p-3 shadow-[var(--card-shadow)]">
             <LogoMark />
-            <h1 className="font-display mt-3 max-w-[10ch] text-[2.6rem] font-black leading-[0.9] tracking-[0.02em] text-[#c4ff0e]">
+            <h1 className="font-display mt-2 max-w-[11ch] text-[2.3rem] font-black leading-[0.82] tracking-[0.01em] text-[#c4ff0e]">
               FreelanceOS
             </h1>
           </div>
