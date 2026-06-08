@@ -28,6 +28,20 @@ function CardGlyph({ glyph = '[//]' }) {
   return <GlyphMark tone="dark" />;
 }
 
+function StatusModule({ value = '1', label = 'S' }) {
+  return (
+    <div className="absolute bottom-4 right-4 flex items-center space-x-2 opacity-50">
+      <div className="flex rounded-sm border border-neutral-700 text-[10px] font-mono tracking-widest text-neutral-400">
+        <span className="border-r border-neutral-700 px-1.5 py-0.5">{label}</span>
+        <span className="px-1.5 py-0.5 text-[#c4ff0e]">{value}</span>
+      </div>
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" className="text-neutral-500">
+        <path d="M2 2h4v4H2z M10 2h4v4h-4z M2 10h4v4H2z M10 10h4v4h-4z" />
+      </svg>
+    </div>
+  );
+}
+
 function MoneyCycler({ financials }) {
   const [currentMonth, setCurrentMonth] = useState(() => new Date());
 
@@ -60,37 +74,38 @@ function MoneyCycler({ financials }) {
   }, [currentMonth, financials]);
 
   return (
-    <section className="relative overflow-hidden bg-neon-green p-5 text-black">
+    <section className="relative overflow-hidden rounded-2xl border border-neutral-800 bg-neutral-900/80 p-5 text-[var(--app-text)] shadow-[var(--card-shadow)]">
       <CardGlyph />
+      <StatusModule value={String(monthStats.invoices.length || 0)} label="M" />
       <div className="flex items-start justify-between gap-4">
         <div>
-          <div className="text-[10px] uppercase tracking-[0.7em] text-black/70">[ MONEY ]</div>
-          <h2 className="mt-2 font-serif text-3xl uppercase tracking-[0.08em] text-black">Expected Earnings</h2>
+          <div className="text-[10px] uppercase tracking-[0.7em] text-neutral-500">[ MONEY ]</div>
+          <h2 className="mt-2 font-serif text-3xl uppercase tracking-[0.08em] text-[var(--app-text)]">Expected Earnings</h2>
         </div>
         <div className="flex items-center gap-2">
           <button
             type="button"
             onClick={() => setCurrentMonth((current) => shiftMonth(current, -1))}
-            className="bg-black px-3 py-2 text-xs font-bold uppercase tracking-[0.5em] text-neon-green transition hover:bg-neutral-950"
+            className="rounded-xl border border-neutral-700 bg-white/[0.03] px-3 py-2 text-xs font-bold uppercase tracking-[0.5em] text-[#c4ff0e] transition hover:bg-white/[0.06]"
           >
             &lt;
           </button>
           <button
             type="button"
             onClick={() => setCurrentMonth((current) => shiftMonth(current, 1))}
-            className="bg-black px-3 py-2 text-xs font-bold uppercase tracking-[0.5em] text-neon-green transition hover:bg-neutral-950"
+            className="rounded-xl border border-neutral-700 bg-white/[0.03] px-3 py-2 text-xs font-bold uppercase tracking-[0.5em] text-[#c4ff0e] transition hover:bg-white/[0.06]"
           >
             &gt;
           </button>
         </div>
       </div>
 
-      <div className="mt-5 bg-black/80 px-4 py-5 text-neon-green">
-        <div className="text-[10px] uppercase tracking-[0.7em] text-neon-green/70">{monthLabel}</div>
-        <div className="mt-3 font-mono text-5xl font-bold leading-none tracking-[0.24em] tabular-nums sm:text-6xl">
+      <div className="mt-5 rounded-2xl border border-neutral-800 bg-black/35 px-4 py-5">
+        <div className="text-[10px] uppercase tracking-[0.7em] text-neutral-500">{monthLabel}</div>
+        <div className="mt-3 font-mono text-5xl font-bold leading-none tracking-[0.24em] tabular-nums text-[#c4ff0e] sm:text-6xl">
           {formatCurrency(monthStats.expectedEarnings)}
         </div>
-        <div className="mt-3 flex items-center justify-between text-[10px] uppercase tracking-[0.45em] text-neon-green/70">
+        <div className="mt-3 flex items-center justify-between text-[10px] uppercase tracking-[0.45em] text-neutral-500">
           <span>{monthStats.invoices.length} invoices</span>
           <span>draft + sent</span>
         </div>
@@ -101,10 +116,10 @@ function MoneyCycler({ financials }) {
 
 function SectionShell({ title, eyebrow, children, className = '' }) {
   return (
-    <section className={`bg-white/[0.03] p-5 ${className}`}>
+    <section className={`rounded-2xl border border-neutral-800 bg-neutral-900/70 p-5 shadow-[var(--card-shadow)] ${className}`}>
       <div className="mb-4">
         <div className="text-[10px] uppercase tracking-[0.7em] text-neutral-500">{eyebrow}</div>
-        <h2 className="mt-2 font-serif text-2xl uppercase tracking-[0.08em] text-neon-green">{title}</h2>
+        <h2 className="mt-2 font-serif text-2xl uppercase tracking-[0.08em] text-[var(--app-text)]">{title}</h2>
       </div>
       {children}
     </section>
@@ -236,11 +251,12 @@ export function Dashboard({ clients, financials, onOpenClient }) {
       case 'welcome':
         return (
           <DashboardWidgetShell key="welcome" className="2xl:col-span-4" draggable dragHandleProps={{ draggable: true, onDragStart: handleDragStart('welcome'), onDragEnd: handleDragEnd, onDragOver: (event) => event.preventDefault(), onDrop: handleDropOn('welcome') }}>
-            <section className="relative overflow-hidden border border-white/10 bg-white/[0.04] p-5">
+          <section className="relative overflow-hidden rounded-2xl border border-neutral-800 bg-neutral-900/70 p-5">
               <div className="text-[10px] uppercase tracking-[0.7em] text-neutral-500">[ TODAY ]</div>
-              <h2 className="mt-2 font-serif text-3xl font-black uppercase tracking-[0.06em] text-neon-green">{todayLabel}</h2>
-              <p className="mt-3 max-w-4xl text-sm leading-7 text-neutral-200">{welcomeSummary}</p>
+              <h2 className="mt-2 font-serif text-3xl font-black uppercase tracking-[0.06em] text-[var(--app-text)]">{todayLabel}</h2>
+              <p className="mt-3 max-w-4xl text-sm leading-7 text-neutral-300">{welcomeSummary}</p>
             </section>
+            <StatusModule value="A" label="S" />
           </DashboardWidgetShell>
         );
       case 'burnRate':
@@ -257,21 +273,22 @@ export function Dashboard({ clients, financials, onOpenClient }) {
               onDrop: handleDropOn('burnRate'),
             }}
           >
-            <section className="relative overflow-hidden bg-neon-red p-5 text-black">
+            <section className="relative overflow-hidden rounded-2xl border border-neutral-800 bg-neutral-900/80 p-5 text-[var(--app-text)] shadow-[var(--card-shadow)]">
               <CardGlyph />
+              <StatusModule value={`${burnRate}`} label="B" />
               <div className="flex items-end justify-between gap-4">
                 <div>
-                  <div className="text-[10px] uppercase tracking-[0.7em] text-black/70">[ THE PULSE ]</div>
-                  <h2 className="mt-2 font-serif text-3xl font-black uppercase tracking-[0.08em] text-black">Burn Rate</h2>
+                  <div className="text-[10px] uppercase tracking-[0.7em] text-neutral-500">[ THE PULSE ]</div>
+                  <h2 className="mt-2 font-serif text-3xl font-black uppercase tracking-[0.08em] text-[var(--app-text)]">Burn Rate</h2>
                 </div>
                 <div className="text-right">
-                  <div className="text-[10px] uppercase tracking-[0.45em] text-black/70">Unpaid</div>
-                  <div className="mt-2 font-mono text-3xl font-bold tracking-[0.2em] tabular-nums text-black">
+                  <div className="text-[10px] uppercase tracking-[0.45em] text-neutral-500">Unpaid</div>
+                  <div className="mt-2 font-mono text-3xl font-bold tracking-[0.2em] tabular-nums text-[#c4ff0e]">
                     {formatCurrency(unpaidAmount)}
                   </div>
                 </div>
               </div>
-              <div className="mt-5 bg-black/80 p-4">
+              <div className="mt-5 rounded-2xl border border-neutral-800 bg-black/35 p-4">
                 <ProgressBar value={burnRate} accent="warning" label={`${burnRate}% of invoice value still open`} />
               </div>
             </section>

@@ -79,7 +79,7 @@ function ToastStack({ toasts, onDismiss }) {
 
 function ToastItem({ toast, onDismiss }) {
   const hasUndo = typeof toast.onUndo === 'function';
-  const toneClass = hasUndo ? 'bg-[#c4ff0e]' : 'bg-[#ff3b3b]';
+  const toneClass = hasUndo ? 'bg-[#f97316]' : 'bg-[#f97316]';
 
   const handleUndo = () => {
     toast.onUndo?.();
@@ -87,7 +87,7 @@ function ToastItem({ toast, onDismiss }) {
   };
 
   return (
-    <div className={`pointer-events-auto relative overflow-hidden border border-black px-4 py-4 ${toneClass} text-black shadow-[6px_6px_0_#000]`}>
+    <div className={`pointer-events-auto relative overflow-hidden rounded-xl border border-black/60 px-4 py-4 ${toneClass} text-black shadow-[8px_8px_0_#000]`}>
       <div className="pr-12 text-[11px] font-black uppercase tracking-[0.35em] leading-snug">
         {toast.message}
       </div>
@@ -95,7 +95,7 @@ function ToastItem({ toast, onDismiss }) {
         <button
           type="button"
           onClick={handleUndo}
-          className="mt-3 border border-black bg-black px-3 py-2 text-[10px] font-black uppercase tracking-[0.55em] text-[#c4ff0e] transition hover:bg-neutral-900"
+          className="mt-3 rounded-xl border border-black bg-black px-3 py-2 text-[10px] font-black uppercase tracking-[0.55em] text-[#f97316] transition hover:bg-neutral-900"
         >
           undo
         </button>

@@ -32,6 +32,11 @@ function withUpdatedAt(row, fallbackTimestamp = Date.now()) {
   };
 }
 
+function stripLegacyTombstoneFields(row) {
+  const { deletedAt, ...rest } = row ?? {};
+  return rest;
+}
+
 function isDeleted(row) {
   return Boolean(row?.isDeleted) || toTimestamp(row?.deletedAt) > 0;
 }
@@ -115,9 +120,8 @@ export function useCloudSync() {
 
     if (liveRows.length > 0) {
       const payload = liveRows.map((row) => ({
-        ...withUpdatedAt(row),
+        ...stripLegacyTombstoneFields(withUpdatedAt(row)),
         isDeleted: false,
-        deletedAt: undefined,
       }));
       const { error } = await supabase.from(table).upsert(payload, { onConflict: 'id' });
       if (error) {
@@ -128,9 +132,8 @@ export function useCloudSync() {
     for (const row of deletedRows) {
       const { error } = await supabase.from(table).upsert(
         {
-          ...withUpdatedAt(row),
+          ...stripLegacyTombstoneFields(withUpdatedAt(row)),
           isDeleted: true,
-          deletedAt: Date.now(),
         },
         { onConflict: 'id' },
       );

@@ -93,22 +93,22 @@ export function ReceiptsView({ receipts }) {
 
   return (
     <div className="space-y-4">
-      <section className="border border-neutral-800 bg-white/[0.03] p-5">
+      <section className="rounded-2xl border border-neutral-800 bg-neutral-900/70 p-5 shadow-[var(--card-shadow)]">
         <div className="text-[10px] uppercase tracking-[0.7em] text-neutral-500">[ RECEIPTS ]</div>
-        <h2 className="mt-2 font-serif text-3xl uppercase tracking-[0.08em] text-neon-green">Vault Intake</h2>
+        <h2 className="mt-2 font-serif text-3xl uppercase tracking-[0.08em] text-[var(--app-text)]">Vault Intake</h2>
         <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
-          <div className="border border-neutral-800 bg-black/40 px-4 py-3">
+          <div className="rounded-xl border border-neutral-800 bg-black/35 px-4 py-3">
             <div className="text-[10px] uppercase tracking-[0.45em] text-neutral-500">count</div>
             <div className="mt-2 font-mono text-3xl font-bold tracking-[0.2em] text-neon-green tabular-nums">{totals.count}</div>
           </div>
-          <div className="border border-neutral-800 bg-black/40 px-4 py-3">
+          <div className="rounded-xl border border-neutral-800 bg-black/35 px-4 py-3">
             <div className="text-[10px] uppercase tracking-[0.45em] text-neutral-500">total</div>
             <div className="mt-2 font-mono text-3xl font-bold tracking-[0.2em] text-neon-green tabular-nums">{formatCurrency(totals.sum)}</div>
           </div>
         </div>
       </section>
 
-      <section className="border border-neutral-800 bg-white/[0.03] p-5">
+      <section className="rounded-2xl border border-neutral-800 bg-neutral-900/70 p-5 shadow-[var(--card-shadow)]">
         <div className="mb-4 text-[10px] uppercase tracking-[0.7em] text-neutral-500">[ ADD RECEIPT ]</div>
         <form className="grid gap-3 lg:grid-cols-2" onSubmit={handleSubmit}>
           <label className="space-y-2">
@@ -117,7 +117,7 @@ export function ReceiptsView({ receipts }) {
               type="date"
               value={date}
               onChange={(event) => setDate(event.target.value)}
-              className="w-full border border-neutral-800 bg-black/60 px-3 py-3 text-xs uppercase tracking-[0.35em] text-neon-green outline-none focus:border-neon-green"
+              className="w-full rounded-xl border border-neutral-800 bg-black/45 px-3 py-3 text-xs uppercase tracking-[0.35em] text-[#c4ff0e] outline-none focus:border-teal-500"
             />
           </label>
           <label className="space-y-2">
@@ -129,7 +129,7 @@ export function ReceiptsView({ receipts }) {
               value={amount}
               onChange={(event) => setAmount(event.target.value)}
               placeholder="85"
-              className="w-full border border-neutral-800 bg-black/60 px-3 py-3 text-xs uppercase tracking-[0.35em] text-neon-green outline-none focus:border-neon-green"
+              className="w-full rounded-xl border border-neutral-800 bg-black/45 px-3 py-3 text-xs uppercase tracking-[0.35em] text-[#c4ff0e] outline-none focus:border-teal-500"
             />
           </label>
           <label className="space-y-2">
@@ -139,7 +139,7 @@ export function ReceiptsView({ receipts }) {
               value={vendor}
               onChange={(event) => setVendor(event.target.value)}
               placeholder="Adobe"
-              className="w-full border border-neutral-800 bg-black/60 px-3 py-3 text-xs uppercase tracking-[0.35em] text-neon-green outline-none focus:border-neon-green"
+              className="w-full rounded-xl border border-neutral-800 bg-black/45 px-3 py-3 text-xs uppercase tracking-[0.35em] text-[#c4ff0e] outline-none focus:border-teal-500"
             />
           </label>
           <label className="space-y-2">
@@ -148,7 +148,7 @@ export function ReceiptsView({ receipts }) {
               type="file"
               accept="image/*"
               onChange={(event) => setImageFile(event.target.files?.[0] ?? null)}
-              className="w-full border border-neutral-800 bg-black/60 px-3 py-2 text-xs uppercase tracking-[0.35em] text-neutral-400 file:mr-3 file:border-0 file:bg-neon-green file:px-3 file:py-2 file:text-xs file:font-bold file:uppercase file:tracking-[0.35em] file:text-black"
+              className="w-full rounded-xl border border-neutral-800 bg-black/45 px-3 py-2 text-xs uppercase tracking-[0.35em] text-neutral-400 file:mr-3 file:border-0 file:bg-gradient-to-r file:from-teal-500 file:to-blue-600 file:px-3 file:py-2 file:text-xs file:font-bold file:uppercase file:tracking-[0.35em] file:text-black"
             />
           </label>
           <label className="space-y-2 lg:col-span-2">
@@ -157,12 +157,12 @@ export function ReceiptsView({ receipts }) {
               value={notes}
               onChange={(event) => setNotes(event.target.value)}
               placeholder="Meal receipt, subscription, transport..."
-              className="min-h-28 w-full border border-neutral-800 bg-black/60 px-3 py-3 font-mono text-sm text-neon-green outline-none placeholder:text-neutral-600 focus:border-neon-green"
+              className="min-h-28 w-full rounded-xl border border-neutral-800 bg-black/45 px-3 py-3 font-mono text-sm text-[#c4ff0e] outline-none placeholder:text-neutral-600 focus:border-teal-500"
             />
           </label>
           <button
             type="submit"
-            className="lg:col-span-2 border border-neon-green/30 bg-neon-green/10 px-4 py-3 text-xs font-bold uppercase tracking-[0.55em] text-neon-green transition hover:bg-neon-green hover:text-black"
+            className="lg:col-span-2 rounded-xl border border-neutral-700 bg-white/[0.03] px-4 py-3 text-xs font-bold uppercase tracking-[0.55em] text-[#c4ff0e] transition hover:bg-white/[0.06]"
           >
             save receipt
           </button>
@@ -172,7 +172,7 @@ export function ReceiptsView({ receipts }) {
       <section className="grid gap-3 xl:grid-cols-2">
         {receipts.length > 0 ? (
           receipts.map((receipt) => (
-            <article key={receipt.id} className="border border-neutral-800 bg-white/[0.03] p-4">
+            <article key={receipt.id} className="relative overflow-hidden rounded-2xl border border-neutral-800 bg-neutral-900/70 p-4 shadow-[var(--card-shadow)]">
               <div className="flex items-start justify-between gap-4">
                 <div>
                   <div className="text-[10px] uppercase tracking-[0.7em] text-neutral-500">
@@ -184,27 +184,27 @@ export function ReceiptsView({ receipts }) {
                   </div>
                   <h3 className="mt-2 text-sm font-bold uppercase tracking-[0.35em] text-neon-green">{receipt.vendor}</h3>
                 </div>
-                <div className="font-mono text-xl font-bold tracking-[0.2em] text-neon-green tabular-nums">{formatCurrency(receipt.amount)}</div>
+                <div className="font-mono text-xl font-bold tracking-[0.2em] text-[#c4ff0e] tabular-nums">{formatCurrency(receipt.amount)}</div>
               </div>
               {receipt.notes ? <p className="mt-3 text-xs uppercase tracking-[0.3em] text-neutral-500">{receipt.notes}</p> : null}
               {receipt.imageBase64 ? (
                 <img
                   src={receipt.imageBase64}
                   alt={receipt.vendor}
-                  className="mt-4 max-h-48 w-full border border-neutral-800 object-cover"
+                  className="mt-4 max-h-48 w-full rounded-xl border border-neutral-800 object-cover"
                 />
               ) : null}
               <button
                 type="button"
                 onClick={() => handleDelete(receipt.id)}
-                className="mt-4 bg-neon-red px-3 py-2 text-[10px] font-bold uppercase tracking-[0.45em] text-black transition hover:bg-neon-red/90"
+                className="mt-4 rounded-xl border border-neutral-700 bg-[#f97316] px-3 py-2 text-[10px] font-bold uppercase tracking-[0.45em] text-black transition hover:bg-[#ea580c]"
               >
                 remove
               </button>
             </article>
           ))
         ) : (
-          <div className="border border-dashed border-neutral-800 px-4 py-6 text-xs uppercase tracking-[0.45em] text-neutral-500">
+          <div className="rounded-xl border border-dashed border-neutral-800 px-4 py-6 text-xs uppercase tracking-[0.45em] text-neutral-500">
             no receipts logged
           </div>
         )}
