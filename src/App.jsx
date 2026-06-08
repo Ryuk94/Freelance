@@ -15,6 +15,8 @@ const THEME_STORAGE_KEY = 'freelanceos.theme';
 const MODE_STORAGE_KEY = 'freelanceos.mode';
 const NOTIFICATION_STORAGE_KEY = 'freelanceos.notificationsEnabled';
 const NOTIFIED_ITEMS_STORAGE_KEY = 'freelanceos.notifiedItems';
+const DB_BACKUP_STORAGE_KEY = 'freelanceos.dbBackup';
+const DB_BACKUP_TABLES = ['leads', 'clients', 'financials', 'receipts', 'gamification', 'commsTracker'];
 
 function getStoredSetting(key, fallback) {
   if (typeof window === 'undefined') {
@@ -36,6 +38,44 @@ function getStoredJson(key, fallback) {
   } catch {
     return fallback;
   }
+}
+
+function getStoredDbBackup() {
+  if (typeof window === 'undefined') {
+    return null;
+  }
+
+  try {
+    const raw = window.localStorage.getItem(DB_BACKUP_STORAGE_KEY);
+    if (!raw) {
+      return null;
+    }
+
+    const parsed = JSON.parse(raw);
+    return parsed && typeof parsed === 'object' ? parsed : null;
+  } catch {
+    return null;
+  }
+}
+
+function setStoredDbBackup(snapshot) {
+  if (typeof window === 'undefined') {
+    return;
+  }
+
+  try {
+    window.localStorage.setItem(DB_BACKUP_STORAGE_KEY, JSON.stringify(snapshot));
+  } catch {
+    // Best effort only.
+  }
+}
+
+function isLoaded(rows) {
+  return rows !== undefined;
+}
+
+function hasAnyRows(snapshot) {
+  return DB_BACKUP_TABLES.some((table) => Array.isArray(snapshot?.[table]) && snapshot[table].length > 0);
 }
 
 function useInstallPrompt() {
@@ -209,6 +249,8 @@ export function App() {
   const clients = useLiveQuery(() => db.clients.toArray(), []);
   const financials = useLiveQuery(() => db.financials.toArray(), []);
   const receipts = useLiveQuery(() => db.receipts.orderBy('date').reverse().toArray(), []);
+  const gamificationRows = useLiveQuery(() => db.gamification.toArray(), []);
+  const commsRows = useLiveQuery(() => db.commsTracker.toArray(), []);
   const { status: syncStatus, lastSynced, forceSync } = useCloudSync();
 
   const [activeView, setActiveView] = useState('dashboard');
@@ -235,6 +277,48 @@ export function App() {
   const visibleClients = (clients ?? []).filter((client) => !client.deletedAt);
   const visibleFinancials = (financials ?? []).filter((entry) => !entry.deletedAt);
   const visibleReceipts = (receipts ?? []).filter((receipt) => !receipt.deletedAt);
+
+  useEffect(() => {
+    const allLoaded =
+      isLoaded(leads) &&
+      isLoaded(clients) &&
+      isLoaded(financials) &&
+      isLoaded(receipts) &&
+      isLoaded(gamificationRows) &&
+      isLoaded(commsRows);
+
+    if (!allLoaded) {
+      return;
+    }
+
+    const snapshot = {
+      leads,
+      clients,
+      financials,
+      receipts,
+      gamification: gamificationRows,
+      commsTracker: commsRows,
+    };
+
+    if (!hasAnyRows(snapshot)) {
+      const backup = getStoredDbBackup();
+      if (hasAnyRows(backup)) {
+        void db.transaction('rw', db.leads, db.clients, db.financials, db.receipts, db.gamification, db.commsTracker, async () => {
+          await Promise.all([
+            db.leads.bulkPut(Array.isArray(backup?.leads) ? backup.leads : []),
+            db.clients.bulkPut(Array.isArray(backup?.clients) ? backup.clients : []),
+            db.financials.bulkPut(Array.isArray(backup?.financials) ? backup.financials : []),
+            db.receipts.bulkPut(Array.isArray(backup?.receipts) ? backup.receipts : []),
+            db.gamification.bulkPut(Array.isArray(backup?.gamification) ? backup.gamification : []),
+            db.commsTracker.bulkPut(Array.isArray(backup?.commsTracker) ? backup.commsTracker : []),
+          ]);
+        });
+        return;
+      }
+    }
+
+    setStoredDbBackup(snapshot);
+  }, [clients, commsRows, financials, gamificationRows, leads, receipts]);
 
   useEffect(() => {
     window.localStorage.setItem(THEME_STORAGE_KEY, theme);
