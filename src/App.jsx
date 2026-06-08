@@ -7,7 +7,6 @@ import { ClientsView } from './components/ClientsView';
 import { LeadsView } from './components/LeadsView';
 import { FinancialsView } from './components/FinancialsView';
 import { ReceiptsView } from './components/ReceiptsView';
-import { QuickAddModal } from './components/QuickAddModal';
 import { ToastProvider } from './components/ToastContext';
 import { useCloudSync } from './hooks/useCloudSync';
 
@@ -290,14 +289,14 @@ export function App() {
 
   const [activeView, setActiveView] = useState('dashboard');
   const [selectedClientId, setSelectedClientId] = useState(null);
-  const [quickAddOpen, setQuickAddOpen] = useState(false);
   const [theme, setTheme] = useState(() => getStoredSetting(THEME_STORAGE_KEY, 'neonos'));
   const [mode, setMode] = useState(() => getStoredSetting(MODE_STORAGE_KEY, 'dark'));
   const installPrompt = useInstallPrompt();
   const swUpdate = useServiceWorkerUpdate();
   const notifications = useReminderNotifications({ leads: leads ?? [], financials: financials ?? [] });
   const resetLocalData = () => {
-    void db.transaction('rw', db.leads, db.clients, db.financials, db.gamification, db.receipts, db.commsTracker, async () => {
+    window.localStorage.setItem('freelanceos.suppressAutoCloudRestore', '1');
+    void db.transaction('rw', db.leads, db.clients, db.financials, db.gamification, db.receipts, db.commsTracker, db.events, async () => {
       await Promise.all([
         db.leads.clear(),
         db.clients.clear(),
@@ -305,6 +304,7 @@ export function App() {
         db.gamification.clear(),
         db.receipts.clear(),
         db.commsTracker.clear(),
+        db.events.clear(),
       ]);
     });
   };
@@ -346,7 +346,7 @@ export function App() {
           syncStatus={syncStatus}
           lastSynced={lastSynced}
           onForceSync={forceSync}
-          onQuickAddOpen={() => setQuickAddOpen(true)}
+          onLogOpen={() => setActiveView('receipts')}
           theme={theme}
           mode={mode}
           onThemeChange={setTheme}
@@ -374,8 +374,6 @@ export function App() {
           {activeView === 'receipts' && <ReceiptsView receipts={receipts ?? []} />}
           {activeView === 'financials' && <FinancialsView financials={financials ?? []} clients={clients ?? []} />}
         </AppLayout>
-
-        <QuickAddModal open={quickAddOpen} onClose={() => setQuickAddOpen(false)} />
       </ToastProvider>
     </>
   );

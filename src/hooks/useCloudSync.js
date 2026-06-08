@@ -2,8 +2,9 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { db } from '../db';
 import { hasSupabaseConfig, supabase } from '../lib/supabase';
 
-const TABLES = ['leads', 'clients', 'financials', 'receipts', 'gamification'];
+const TABLES = ['leads', 'clients', 'financials', 'receipts', 'gamification', 'commsTracker', 'events'];
 const FIVE_MINUTES = 5 * 60 * 1000;
+const LOCAL_RESET_FLAG = 'freelanceos.suppressAutoCloudRestore';
 
 function toTimestamp(value) {
   if (typeof value === 'number' && Number.isFinite(value)) {
@@ -143,8 +144,12 @@ export function useCloudSync() {
     }
   }, []);
 
-  const runSync = useCallback(async () => {
+  const runSync = useCallback(async ({ force = false } = {}) => {
     if (!hasSupabaseConfig || !supabase) {
+      return { ok: false, skipped: true };
+    }
+
+    if (!force && typeof window !== 'undefined' && window.localStorage.getItem(LOCAL_RESET_FLAG) === '1') {
       return { ok: false, skipped: true };
     }
 
@@ -172,6 +177,10 @@ export function useCloudSync() {
       if (mountedRef.current) {
         setLastSynced(syncedAt);
         setStatus('idle');
+      }
+
+      if (typeof window !== 'undefined' && window.localStorage.getItem(LOCAL_RESET_FLAG) === '1') {
+        window.localStorage.removeItem(LOCAL_RESET_FLAG);
       }
 
       return { ok: true, syncedAt };

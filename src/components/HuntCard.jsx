@@ -2,7 +2,6 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../db';
 import { useGamification } from '../hooks/useGamification';
-import { GlyphMark } from './ui/GlyphMark';
 
 export function HuntCard() {
   const leads = useLiveQuery(
@@ -49,7 +48,6 @@ export function HuntCard() {
   return (
     <section className="bg-white/[0.03] p-5">
       <div className="mb-4 relative">
-        <GlyphMark tone="light" className="bottom-auto right-0 top-0" />
         <div className="text-[10px] uppercase tracking-[0.7em] text-neutral-500">[ THE HUNT ]</div>
         <h2 className="mt-2 font-serif text-3xl font-black uppercase tracking-[0.08em] text-neon-green">Next Follow-Ups</h2>
       </div>

@@ -3,7 +3,6 @@ import { db } from '../db';
 import { useToast } from '../hooks/useToast';
 import { QuickLinks } from './QuickLinks';
 import { Scratchpad } from './Scratchpad';
-import { GlyphMark } from './ui/GlyphMark';
 
 function normalizeStatus(client) {
   return client?.status === 'past' ? 'archived' : client?.status ?? 'active';
@@ -14,10 +13,6 @@ function groupClients(clients) {
     active: clients.filter((client) => normalizeStatus(client) === 'active'),
     archived: clients.filter((client) => normalizeStatus(client) === 'archived'),
   };
-}
-
-function CardGlyph({ glyph = '[//]' }) {
-  return <GlyphMark tone="dark" />;
 }
 
 function ClientListButton({ client, active, onSelect }) {
@@ -184,7 +179,6 @@ function BrandKitGallery({ client }) {
         {brandKits.length > 0 ? (
           brandKits.map((kit) => (
             <article key={kit.id} className="relative overflow-hidden bg-black/50 p-4">
-              <CardGlyph glyph="+" />
               <div className="text-xs font-bold uppercase tracking-[0.35em] text-neon-green">{kit.name}</div>
               <div className="mt-2 text-[10px] uppercase tracking-[0.45em] text-neutral-500">
                 {kit.tone || 'no tone'} / {kit.typography || 'no typography'}

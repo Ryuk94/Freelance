@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
 const LABELS = {
   dashboard: 'DASHBOARD',
@@ -10,38 +10,21 @@ const LABELS = {
 
 const DOCK_STORAGE_KEY = 'freelanceos.quickDockUrls';
 const QUOTES = [
-  {
-    text: 'Stay calibrated. Small actions compound into clean results.',
-    source: 'Affirmation',
-  },
-  {
-    text: 'When the signal is noisy, trust the next precise move.',
-    source: 'Inspired by Neon Genesis Evangelion',
-  },
-  {
-    text: 'You do not need perfect conditions to begin.',
-    source: 'Affirmation',
-  },
-  {
-    text: 'Even in the quiet spaces, momentum is still momentum.',
-    source: 'Inspired by Monster',
-  },
-  {
-    text: 'Protect your energy, then spend it with intent.',
-    source: 'Inspired by Frieren',
-  },
-  {
-    text: 'Hard days are part of the build. Keep shipping anyway.',
-    source: 'Affirmation',
-  },
+  { text: 'Stay calibrated. Small actions compound into clean results.', source: 'Affirmation' },
+  { text: 'When the signal is noisy, trust the next precise move.', source: 'Neon Genesis Evangelion' },
+  { text: 'You do not need perfect conditions to begin.', source: 'Affirmation' },
+  { text: 'Even in the quiet spaces, momentum is still momentum.', source: 'Monster' },
+  { text: 'Protect your energy, then spend it with intent.', source: 'Frieren' },
+  { text: 'Hard days are part of the build. Keep shipping anyway.', source: 'Affirmation' },
+  { text: 'The board is never empty. It is simply waiting for a deliberate move.', source: 'Affirmation' },
+  { text: 'Keep the surface calm and the system honest.', source: 'Affirmation' },
+  { text: 'Good tooling disappears. Good habits remain.', source: 'Affirmation' },
+  { text: 'Small fixes compound faster than big intentions.', source: 'Affirmation' },
 ];
 
 function normalizeDockUrl(input) {
   const value = input.trim();
-  if (!value) {
-    return null;
-  }
-
+  if (!value) return null;
   try {
     return new URL(value).toString();
   } catch {
@@ -63,10 +46,7 @@ function getDockHost(url) {
 
 function useDockUrls() {
   const [urls, setUrls] = useState(() => {
-    if (typeof window === 'undefined') {
-      return [];
-    }
-
+    if (typeof window === 'undefined') return [];
     try {
       const raw = window.localStorage.getItem(DOCK_STORAGE_KEY);
       const parsed = raw ? JSON.parse(raw) : [];
@@ -81,34 +61,29 @@ function useDockUrls() {
     try {
       window.localStorage.setItem(DOCK_STORAGE_KEY, JSON.stringify(urls));
     } catch {
-      // localStorage is best-effort only.
+      // best effort
     }
   }, [urls]);
 
-  const addUrl = () => {
-    const normalized = normalizeDockUrl(draft);
-    if (!normalized) {
-      return;
-    }
-
-    setUrls((current) => (current.includes(normalized) ? current : [...current, normalized]));
-    setDraft('');
+  return {
+    urls,
+    draft,
+    setDraft,
+    addUrl: () => {
+      const normalized = normalizeDockUrl(draft);
+      if (!normalized) return;
+      setUrls((current) => (current.includes(normalized) ? current : [...current, normalized]));
+      setDraft('');
+    },
   };
-
-  return { urls, draft, setDraft, addUrl };
 }
 
 function QuickDock() {
   const { urls, draft, setDraft, addUrl } = useDockUrls();
 
   return (
-    <section className="bg-white/[0.04] p-3">
-        <div className="flex items-center justify-between gap-3">
-        <div>
-          <div className="text-[10px] uppercase tracking-[0.55em] text-neutral-400">[ QUICK DOCK ]</div>
-        </div>
-      </div>
-
+    <section className="rounded-2xl border border-neutral-800 bg-[var(--card-bg)] p-3 shadow-[var(--card-shadow)]">
+      <div className="text-[10px] uppercase tracking-[0.55em] text-neutral-500">[ QUICK DOCK ]</div>
       <div className="mt-3 flex flex-wrap gap-2">
         {urls.length > 0 ? (
           urls.map((url) => {
@@ -120,13 +95,9 @@ function QuickDock() {
                 target="_blank"
                 rel="noreferrer"
                 title={host}
-                className="flex h-10 w-10 items-center justify-center bg-black/55 opacity-55 grayscale transition hover:bg-white/10 hover:opacity-100 hover:grayscale-0"
+                className="flex h-10 w-10 items-center justify-center rounded-xl border border-neutral-800 bg-black/45 opacity-75 grayscale transition hover:opacity-100 hover:grayscale-0"
               >
-                <img
-                  src={`https://www.google.com/s2/favicons?domain=${encodeURIComponent(host)}&sz=32`}
-                  alt={host}
-                  className="h-6 w-6"
-                />
+                <img src={`https://www.google.com/s2/favicons?domain=${encodeURIComponent(host)}&sz=32`} alt={host} className="h-6 w-6" />
               </a>
             );
           })
@@ -134,18 +105,17 @@ function QuickDock() {
           <div className="px-3 py-2 text-[11px] uppercase tracking-[0.3em] text-neutral-500">add urls below</div>
         )}
       </div>
-
       <div className="mt-3 flex gap-2">
         <input
           value={draft}
           onChange={(event) => setDraft(event.target.value)}
           placeholder="https://..."
-          className="min-w-0 flex-1 bg-black/70 px-3 py-2 text-xs text-neon-green outline-none placeholder:text-neutral-600"
+          className="min-w-0 flex-1 rounded-xl border border-neutral-800 bg-black/45 px-3 py-2 text-xs text-[#c4ff0e] outline-none placeholder:text-neutral-600"
         />
         <button
           type="button"
           onClick={addUrl}
-          className="bg-neon-green px-3 py-2 text-xs font-bold uppercase tracking-[0.35em] text-black transition hover:bg-neon-green/90"
+          className="rounded-xl border border-neutral-700 bg-white/[0.03] px-3 py-2 text-xs font-bold uppercase tracking-[0.35em] text-[#c4ff0e] transition hover:bg-white/[0.06]"
         >
           +
         </button>
@@ -155,36 +125,25 @@ function QuickDock() {
 }
 
 function useRotatingQuote() {
-  const quotes = QUOTES;
   const [index, setIndex] = useState(0);
 
   useEffect(() => {
-    if (quotes.length <= 1) {
-      return undefined;
-    }
-
-    const timer = window.setInterval(() => {
-      setIndex((current) => (current + 1) % quotes.length);
-    }, 18000);
-
+    if (QUOTES.length <= 1) return undefined;
+    const timer = window.setInterval(() => setIndex((current) => (current + 1) % QUOTES.length), 15000);
     return () => window.clearInterval(timer);
-  }, [quotes.length]);
+  }, []);
 
-  return quotes[index] ?? quotes[0];
+  return QUOTES[index] ?? QUOTES[0];
 }
 
 function QuoteBar() {
   const quote = useRotatingQuote();
-
-  if (!quote) {
-    return null;
-  }
-
+  if (!quote) return null;
   return (
-    <footer className="mt-4 hidden border-t border-white/10 bg-black/70 px-4 py-3 sm:block sm:px-6">
+    <footer className="mt-4 hidden rounded-2xl border border-neutral-800 bg-[var(--card-bg)] px-4 py-3 sm:block">
       <div className="flex flex-col gap-1 text-[11px] leading-relaxed text-neutral-300 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
         <p className="max-w-4xl">
-          <span className="mr-2 text-neon-green">/</span>
+          <span className="mr-2 text-[#c4ff0e]">/</span>
           {quote.text}
         </p>
         <p className="shrink-0 uppercase tracking-[0.35em] text-neutral-500">{quote.source}</p>
@@ -203,6 +162,144 @@ function LogoMark() {
   );
 }
 
+function CommandButton({ onOpenMenu }) {
+  return (
+    <button
+      type="button"
+      onClick={onOpenMenu}
+      className="group flex h-14 w-14 items-center justify-center rounded-2xl bg-[#c4ff0e] text-black shadow-[0_14px_24px_rgba(0,0,0,0.45)] transition hover:scale-[1.02]"
+      aria-label="Open commands"
+    >
+      <svg width="22" height="22" viewBox="0 0 22 22" fill="currentColor">
+        <path d="M3 3h7v7H3zM12 3h7v7h-7zM3 12h7v7H3zM12 12h7v7h-7z" />
+      </svg>
+    </button>
+  );
+}
+
+function CommandMenu({
+  open,
+  onClose,
+  onAdd,
+  onLog,
+  onReset,
+  theme,
+  onThemeChange,
+  onOpenSettings,
+  onEnableNotifications,
+  onTestNotification,
+  onToggleNotifications,
+  onInstallApp,
+  canInstallApp,
+  isAppInstalled,
+  notificationsEnabled,
+  notificationsPermission,
+}) {
+  if (!open) return null;
+  return (
+    <div className="absolute left-4 top-20 z-40 w-[min(92vw,22rem)] rounded-2xl border border-neutral-800 bg-[#0b0d11] p-3 shadow-[var(--card-shadow)]">
+      <div className="grid gap-2">
+        <button
+          type="button"
+          onClick={() => {
+            onAdd?.();
+            onClose?.();
+          }}
+          className="rounded-xl border border-neutral-800 bg-white/[0.03] px-4 py-3 text-left text-xs font-bold uppercase tracking-[0.45em] text-[var(--app-text)]"
+        >
+          Add
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            onLog?.();
+            onClose?.();
+          }}
+          className="rounded-xl border border-neutral-800 bg-white/[0.03] px-4 py-3 text-left text-xs font-bold uppercase tracking-[0.45em] text-[var(--app-text)]"
+        >
+          Log
+        </button>
+        <button
+          type="button"
+          onClick={() => onThemeChange(theme === 'light' ? 'dark' : 'light')}
+          className="rounded-xl border border-neutral-800 bg-white/[0.03] px-4 py-3 text-left text-xs font-bold uppercase tracking-[0.45em] text-[var(--app-text)]"
+        >
+          {theme === 'light' ? 'Dark Mode' : 'Light Mode'}
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            onReset?.();
+            onClose?.();
+          }}
+          className="rounded-xl border border-neutral-800 bg-white/[0.03] px-4 py-3 text-left text-xs font-bold uppercase tracking-[0.45em] text-[var(--app-text)]"
+        >
+          Reset local data
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            onOpenSettings?.();
+            onClose?.();
+          }}
+          className="rounded-xl border border-neutral-800 bg-white/[0.03] px-4 py-3 text-left text-xs font-bold uppercase tracking-[0.45em] text-[var(--app-text)]"
+        >
+          Settings
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            onToggleNotifications?.();
+            onClose?.();
+          }}
+          className="rounded-xl border border-neutral-800 bg-white/[0.03] px-4 py-3 text-left text-xs font-bold uppercase tracking-[0.45em] text-[var(--app-text)]"
+        >
+          {notificationsEnabled ? 'Pause Nudges' : 'Resume Nudges'}
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            onTestNotification?.();
+            onClose?.();
+          }}
+          className="rounded-xl border border-neutral-800 bg-white/[0.03] px-4 py-3 text-left text-xs font-bold uppercase tracking-[0.45em] text-[var(--app-text)]"
+        >
+          Test Notification
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            onInstallApp?.();
+            onClose?.();
+          }}
+          className="rounded-xl border border-neutral-800 bg-white/[0.03] px-4 py-3 text-left text-xs font-bold uppercase tracking-[0.45em] text-[var(--app-text)]"
+        >
+          {isAppInstalled ? 'App Installed' : canInstallApp ? 'Install App' : 'Install Not Ready'}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function SyncIndicator({ status, lastSynced, onForceSync }) {
+  const statusLabel = { idle: 'SYNCED', syncing: 'SYNCING', error: 'ERROR' }[status] ?? 'SYNCED';
+  const label = lastSynced ? new Date(lastSynced).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'never';
+  return (
+    <button
+      type="button"
+      onClick={onForceSync}
+      className="flex w-full items-center justify-between rounded-2xl border border-neutral-800 bg-white/[0.03] px-4 py-3 text-left text-xs font-bold uppercase tracking-[0.35em] text-[var(--app-text)] transition hover:bg-white/[0.06]"
+      title={`Last synced ${label}`}
+    >
+      <span className="flex items-center gap-3">
+        <span className={`h-2.5 w-2.5 rounded-full ${status === 'error' ? 'bg-[#f97316]' : 'bg-[#14b8a6]'}`} />
+        <span>CLOUD</span>
+      </span>
+      <span className="text-[10px] tracking-[0.45em] text-neutral-500">{statusLabel}</span>
+    </button>
+  );
+}
+
 export function AppLayout({
   activeView,
   navItems,
@@ -210,7 +307,6 @@ export function AppLayout({
   syncStatus,
   lastSynced,
   onForceSync,
-  onQuickAddOpen,
   theme,
   mode,
   onThemeChange,
@@ -227,30 +323,49 @@ export function AppLayout({
   onEnableNotifications,
   onTestNotification,
   onToggleNotifications,
+  onLogOpen,
   children,
 }) {
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [commandsOpen, setCommandsOpen] = useState(false);
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-[var(--app-bg)] text-[var(--app-text)]">
-      {theme === 'neonos' ? (
-        <div className="pointer-events-none absolute inset-0 overflow-hidden">
-          <div className="neon-bg-grid" />
-          <div className="neon-bg-orb neon-bg-orb-a" />
-          <div className="neon-bg-orb neon-bg-orb-b" />
-          <div className="neon-bg-scanlines" />
-        </div>
-      ) : null}
       <div className="relative mx-auto flex min-h-screen max-w-[1600px] gap-4 px-4 py-4 sm:px-6 lg:px-8">
         <aside className="hidden w-[320px] shrink-0 flex-col gap-4 bg-[var(--panel-bg)] p-4 lg:flex">
-          <div className="rounded-3xl bg-[var(--card-bg)] p-4 shadow-[var(--card-shadow)]">
+          <div className="rounded-2xl border border-neutral-800 bg-[var(--card-bg)] p-4 shadow-[var(--card-shadow)]">
             <LogoMark />
-            <h1 className="font-display mt-3 max-w-[10ch] text-[2.6rem] font-black leading-[0.9] tracking-[0.02em] text-neon-green">
+            <h1 className="font-display mt-3 max-w-[10ch] text-[2.6rem] font-black leading-[0.9] tracking-[0.02em] text-[#c4ff0e]">
               FreelanceOS
             </h1>
           </div>
 
-          <QuickDock />
+          <div className="relative">
+            <div className="absolute left-0 top-0">
+              <CommandButton onOpenMenu={() => setCommandsOpen((current) => !current)} />
+            </div>
+            <div className="pl-16">
+              <QuickDock />
+            </div>
+            <CommandMenu
+              open={commandsOpen}
+              onClose={() => setCommandsOpen(false)}
+              onAdd={onLogOpen}
+              onLog={onLogOpen}
+              onReset={onResetLocalData}
+              theme={theme}
+              onThemeChange={onThemeChange}
+              onOpenSettings={() => setSettingsOpen(true)}
+              onEnableNotifications={onEnableNotifications}
+              onTestNotification={onTestNotification}
+              onToggleNotifications={onToggleNotifications}
+              onInstallApp={onInstallApp}
+              canInstallApp={canInstallApp}
+              isAppInstalled={isAppInstalled}
+              notificationsEnabled={notificationsEnabled}
+              notificationsPermission={notificationsPermission}
+            />
+          </div>
 
           <nav className="space-y-2">
             {navItems.map((item) => {
@@ -261,62 +376,44 @@ export function AppLayout({
                   type="button"
                   onClick={() => onViewChange(item)}
                   className={[
-                    'flex w-full items-center justify-between px-4 py-3 text-left text-xs font-bold uppercase tracking-[0.45em] transition',
+                    'flex w-full items-center justify-between rounded-2xl border px-4 py-3 text-left text-xs font-bold uppercase tracking-[0.45em] transition',
                     active
-                      ? 'bg-neon-green text-black'
-                      : 'bg-white/[0.04] text-neutral-300 hover:bg-white/[0.08] hover:text-white',
+                      ? 'border-neutral-700 bg-white/[0.06] text-[var(--app-text)]'
+                      : 'border-neutral-800 bg-white/[0.03] text-neutral-300 hover:bg-white/[0.06] hover:text-[var(--app-text)]',
                   ].join(' ')}
                 >
                   <span>{LABELS[item] ?? item}</span>
-                  <span className={active ? 'text-black/70' : 'text-neutral-500'}>[{String(active ? 'on' : 'off').toUpperCase()}]</span>
+                  <span className="text-neutral-500">[{String(active ? 'on' : 'off').toUpperCase()}]</span>
                 </button>
               );
             })}
           </nav>
 
-          <div className="rounded-3xl bg-[var(--card-bg)] p-4 shadow-[var(--card-shadow)]">
-            <p className="text-[10px] uppercase tracking-[0.7em] text-neutral-500">[ QUICK ADD ]</p>
-            <button
-              type="button"
-              onClick={onQuickAddOpen}
-              className="mt-3 w-full bg-neon-green px-4 py-3 text-xs font-bold uppercase tracking-[0.5em] text-black transition hover:bg-neon-green/90"
-            >
-              log capture
-            </button>
-          </div>
-
           <SyncIndicator status={syncStatus} lastSynced={lastSynced} onForceSync={onForceSync} />
         </aside>
 
         <div className="min-w-0 flex-1">
-          <header className="mb-4 rounded-3xl bg-[var(--card-bg)] px-4 py-4 shadow-[var(--card-shadow)] lg:hidden">
+          <header className="mb-4 rounded-2xl border border-neutral-800 bg-[var(--card-bg)] px-4 py-4 shadow-[var(--card-shadow)] lg:hidden">
             <div className="flex items-center justify-between gap-3">
               <div className="flex min-w-0 items-center gap-3">
                 <LogoMark />
                 <div className="min-w-0">
                   <div className="text-[9px] uppercase tracking-[0.55em] text-neutral-500">[ SYSTEM ]</div>
-                  <h1 className="font-display mt-1 truncate text-[2rem] font-black leading-[0.95] tracking-[0.02em] text-neon-green sm:text-[2.35rem]">
+                  <h1 className="font-display mt-1 truncate text-[2rem] font-black leading-[0.95] tracking-[0.02em] text-[#c4ff0e] sm:text-[2.35rem]">
                     FreelanceOS
                   </h1>
                 </div>
               </div>
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={() => setSettingsOpen(true)}
-                  className="flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-black/85 text-sm font-bold text-white shadow-lg"
-                  title="Settings"
-                >
-                  ⚙
-                </button>
-                <button
-                  type="button"
-                  onClick={onQuickAddOpen}
-                  className="bg-neon-green px-3 py-2 text-[10px] font-bold uppercase tracking-[0.5em] text-black"
-                >
-                  + add
-                </button>
-              </div>
+              <button
+                type="button"
+                onClick={() => setCommandsOpen((current) => !current)}
+                className="rounded-2xl bg-[#c4ff0e] px-3 py-2 text-xs font-black uppercase tracking-[0.45em] text-black"
+              >
+                menu
+              </button>
+            </div>
+            <div className="mt-3">
+              <SyncIndicator status={syncStatus} lastSynced={lastSynced} onForceSync={onForceSync} />
             </div>
           </header>
 
@@ -331,7 +428,7 @@ export function AppLayout({
                   className={[
                     'rounded-2xl px-3 py-3 text-[10px] font-bold uppercase tracking-[0.45em] transition',
                     active
-                      ? 'bg-neon-green text-black'
+                      ? 'bg-[#c4ff0e] text-black'
                       : 'bg-[var(--card-bg)] text-[var(--muted-text)] hover:bg-[var(--card-hover)] hover:text-[var(--app-text)]',
                   ].join(' ')}
                 >
@@ -341,26 +438,18 @@ export function AppLayout({
             })}
           </nav>
 
-          <main className="rounded-[2rem] bg-[var(--surface-bg)] p-4 pb-20 shadow-[var(--card-shadow)] sm:p-6 sm:pb-20">
+          <main className="rounded-2xl bg-[var(--surface-bg)] p-4 pb-20 shadow-[var(--card-shadow)] sm:p-6 sm:pb-20">
             {updateAvailable ? (
-              <div className="mb-4 flex flex-wrap items-center justify-between gap-3 border border-neon-green/30 bg-neon-green/10 px-4 py-3 text-black">
+              <div className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-[#f97316]/30 bg-[#f97316]/10 px-4 py-3 text-black">
                 <div className="min-w-0">
                   <div className="text-[10px] uppercase tracking-[0.55em] text-black/60">[ UPDATE READY ]</div>
                   <div className="mt-1 text-sm font-bold uppercase tracking-[0.25em] text-black">A newer version is available.</div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <button
-                    type="button"
-                    onClick={onRefreshApp}
-                    className="bg-black px-3 py-2 text-[10px] font-bold uppercase tracking-[0.45em] text-neon-green transition hover:bg-neutral-950"
-                  >
+                  <button type="button" onClick={onRefreshApp} className="rounded-xl bg-black px-3 py-2 text-[10px] font-bold uppercase tracking-[0.45em] text-[#f97316]">
                     refresh
                   </button>
-                  <button
-                    type="button"
-                    onClick={onDismissUpdate}
-                    className="border border-black/20 px-3 py-2 text-[10px] font-bold uppercase tracking-[0.45em] text-black transition hover:bg-black/5"
-                  >
+                  <button type="button" onClick={onDismissUpdate} className="rounded-xl border border-black/20 px-3 py-2 text-[10px] font-bold uppercase tracking-[0.45em] text-black">
                     later
                   </button>
                 </div>
@@ -373,26 +462,9 @@ export function AppLayout({
         </div>
       </div>
 
-      <button
-        type="button"
-        onClick={onQuickAddOpen}
-        className="fixed bottom-5 right-5 z-40 bg-neon-green px-4 py-3 text-[10px] font-bold uppercase tracking-[0.6em] text-black transition hover:bg-neon-green/90"
-      >
-        quick add
-      </button>
-
-      <button
-        type="button"
-        onClick={() => setSettingsOpen(true)}
-        className="fixed bottom-5 left-5 z-40 hidden rounded-full border border-white/10 bg-black/70 px-4 py-3 text-[10px] font-bold uppercase tracking-[0.45em] text-white shadow-lg transition hover:bg-black/85 hover:opacity-100 lg:block lg:bg-black/40 lg:opacity-40"
-        title="Settings"
-      >
-        settings
-      </button>
-
       {settingsOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-4 py-6 backdrop-blur-sm">
-          <div className="w-full max-w-lg rounded-[2rem] border border-white/10 bg-[var(--panel-bg)] p-5 shadow-2xl">
+          <div className="w-full max-w-lg rounded-2xl border border-neutral-800 bg-[var(--panel-bg)] p-5 shadow-2xl">
             <div className="flex items-start justify-between gap-4">
               <div>
                 <div className="text-[10px] uppercase tracking-[0.7em] text-neutral-500">[ SETTINGS ]</div>
@@ -401,70 +473,19 @@ export function AppLayout({
               <button
                 type="button"
                 onClick={() => setSettingsOpen(false)}
-                className="rounded-full bg-white/5 px-3 py-2 text-[10px] uppercase tracking-[0.45em] text-[var(--muted-text)]"
+                className="rounded-xl bg-white/5 px-3 py-2 text-[10px] uppercase tracking-[0.45em] text-[var(--muted-text)]"
               >
                 close
               </button>
             </div>
 
             <div className="mt-5 space-y-3">
-              <SettingsButton
-                label="Reset Local Data"
-                description="Clear all local records and restore an empty workspace."
-                onClick={() => {
-                  onResetLocalData();
-                  setSettingsOpen(false);
-                }}
-              />
-              <SettingsButton
-                label={mode === 'light' ? 'Light Mode: On' : 'Light Mode: Off'}
-                description="Switch the app between dark and light presentation."
-                onClick={() => onModeChange(mode === 'light' ? 'dark' : 'light')}
-              />
-              <SettingsButton
-                label={isAppInstalled ? 'App Installed' : canInstallApp ? 'Install App' : 'Install Not Ready'}
-                description={
-                  canInstallApp
-                    ? 'Open the browser install dialogue to add FreelanceOS to your device.'
-                    : isAppInstalled
-                      ? 'FreelanceOS is already installed on this device.'
-                      : 'Install becomes available once the browser exposes the app prompt.'
-                }
-                onClick={onInstallApp}
-              />
-              <SettingsButton
-                label={notificationsEnabled ? `Notifications: ${notificationsPermission}` : 'Enable Notifications'}
-                description="Receive deadline and follow-up nudges in Chrome."
-                onClick={onEnableNotifications}
-              />
-              <SettingsButton
-                label="Test Notification"
-                description="Send a quick local notification to confirm Chrome support."
-                onClick={onTestNotification}
-              />
-              <SettingsButton
-                label={notificationsEnabled ? 'Pause NUDGES' : 'Resume NUDGES'}
-                description="Temporarily mute or resume deadline reminders."
-                onClick={onToggleNotifications}
-              />
-
-              <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
-                <div className="text-[10px] uppercase tracking-[0.55em] text-neutral-500">Theme</div>
-                <div className="mt-3 grid gap-2 sm:grid-cols-2">
-                  <ThemeChoice
-                    active={theme === 'neonos'}
-                    title="NeonOS"
-                    description="Current neon terminal look."
-                    onClick={() => onThemeChange('neonos')}
-                  />
-                  <ThemeChoice
-                    active={theme === 'boringos'}
-                    title="BoringOS"
-                    description="Rounded, clean, modern UI."
-                    onClick={() => onThemeChange('boringos')}
-                  />
-                </div>
-              </div>
+              <SettingsButton label="Reset Local Data" description="Clear all local records and restore an empty workspace." onClick={() => { onResetLocalData(); setSettingsOpen(false); }} />
+              <SettingsButton label={mode === 'light' ? 'Light Mode: On' : 'Light Mode: Off'} description="Switch the app between dark and light presentation." onClick={() => onModeChange(mode === 'light' ? 'dark' : 'light')} />
+              <SettingsButton label={isAppInstalled ? 'App Installed' : canInstallApp ? 'Install App' : 'Install Not Ready'} description={canInstallApp ? 'Open the browser install dialogue to add FreelanceOS to your device.' : isAppInstalled ? 'FreelanceOS is already installed on this device.' : 'Install becomes available once the browser exposes the app prompt.'} onClick={onInstallApp} />
+              <SettingsButton label={notificationsEnabled ? `Notifications: ${notificationsPermission}` : 'Enable Notifications'} description="Receive deadline and follow-up nudges in Chrome." onClick={onEnableNotifications} />
+              <SettingsButton label="Test Notification" description="Send a quick local notification to confirm Chrome support." onClick={onTestNotification} />
+              <SettingsButton label={notificationsEnabled ? 'Pause NUDGES' : 'Resume NUDGES'} description="Temporarily mute or resume deadline reminders." onClick={onToggleNotifications} />
             </div>
           </div>
         </div>
@@ -475,71 +496,9 @@ export function AppLayout({
 
 function SettingsButton({ label, description, onClick }) {
   return (
-    <button
-      type="button"
-      onClick={onClick}
-      className="w-full rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-4 text-left transition hover:bg-white/[0.08]"
-    >
+    <button type="button" onClick={onClick} className="w-full rounded-2xl border border-neutral-800 bg-white/[0.04] px-4 py-4 text-left transition hover:bg-white/[0.08]">
       <div className="text-sm font-bold text-[var(--app-text)]">{label}</div>
       <div className="mt-1 text-xs text-[var(--muted-text)]">{description}</div>
     </button>
   );
 }
-
-function ThemeChoice({ active, title, description, onClick }) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={[
-        'rounded-2xl border px-4 py-4 text-left transition',
-        active ? 'border-neon-green bg-neon-green/10' : 'border-white/10 bg-white/[0.03] hover:bg-white/[0.06]',
-      ].join(' ')}
-    >
-      <div className="text-sm font-bold text-[var(--app-text)]">{title}</div>
-      <div className="mt-1 text-xs text-[var(--muted-text)]">{description}</div>
-    </button>
-  );
-}
-
-function SyncIndicator({ status, lastSynced, onForceSync }) {
-  const statusLabel = {
-    idle: 'SYNCED',
-    syncing: 'SYNCING',
-    error: 'ERROR',
-  }[status] ?? 'SYNCED';
-
-  const statusClass =
-    status === 'error'
-      ? 'bg-neon-red text-black'
-      : status === 'syncing'
-        ? 'bg-neon-green text-black'
-        : 'bg-white/[0.04] text-neutral-300';
-
-  const dot =
-    status === 'syncing' ? (
-      <span className="h-3 w-3 animate-spin border-2 border-current border-t-transparent" />
-    ) : (
-      <span className="h-3 w-3 bg-current" />
-    );
-
-  const label = lastSynced
-    ? new Date(lastSynced).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-    : 'never';
-
-  return (
-      <button
-        type="button"
-        onClick={onForceSync}
-      className={`relative flex w-full flex-nowrap items-center justify-between gap-3 whitespace-nowrap rounded-2xl px-4 py-3 text-left text-xs font-bold uppercase tracking-[0.35em] leading-none transition ${statusClass}`}
-      title={`Last synced ${label}`}
-    >
-      <span className="flex min-w-0 items-center gap-3 whitespace-nowrap">
-        <span className="flex h-5 w-5 items-center justify-center">{dot}</span>
-        <span>CLOUD</span>
-      </span>
-      <span className="shrink-0 whitespace-nowrap text-[10px] tracking-[0.45em]">{statusLabel}</span>
-    </button>
-  );
-}
-

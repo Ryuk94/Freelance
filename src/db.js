@@ -75,10 +75,34 @@ db.version(7)
     financials: '++id, clientId, type, amount, status, date, updatedAt, isDeleted',
     gamification: '++id, currentLevel, currentXp, dailyStreak, updatedAt, isDeleted',
     receipts: '++id, date, amount, vendor, notes, imageBase64, updatedAt, isDeleted',
-    commsTracker: '++id, platform, lastChecked, updatedAt, isDeleted'
+    commsTracker: '++id, platform, lastChecked, updatedAt, isDeleted',
+    events: '++id, title, clientId, date, allDay, updatedAt, isDeleted'
   })
   .upgrade(async (tx) => {
-    const tableNames = ['leads', 'clients', 'financials', 'gamification', 'receipts', 'commsTracker'];
+    const tableNames = ['leads', 'clients', 'financials', 'gamification', 'receipts', 'commsTracker', 'events'];
+
+    for (const tableName of tableNames) {
+      await tx.table(tableName).toCollection().modify((row) => {
+        if (row.isDeleted === undefined) {
+          row.isDeleted = Boolean(row.deletedAt);
+        }
+        delete row.deletedAt;
+      });
+    }
+  });
+
+db.version(8)
+  .stores({
+    leads: '++id, companyName, status, xpRewarded, createdAt, updatedAt, isDeleted',
+    clients: '++id, name, status, quickLinks, notes, brandKits, createdAt, updatedAt, isDeleted',
+    financials: '++id, clientId, type, amount, status, date, updatedAt, isDeleted',
+    gamification: '++id, currentLevel, currentXp, dailyStreak, updatedAt, isDeleted',
+    receipts: '++id, date, amount, vendor, notes, imageBase64, updatedAt, isDeleted',
+    commsTracker: '++id, platform, lastChecked, updatedAt, isDeleted',
+    events: '++id, title, clientId, date, allDay, updatedAt, isDeleted'
+  })
+  .upgrade(async (tx) => {
+    const tableNames = ['leads', 'clients', 'financials', 'gamification', 'receipts', 'commsTracker', 'events'];
 
     for (const tableName of tableNames) {
       await tx.table(tableName).toCollection().modify((row) => {

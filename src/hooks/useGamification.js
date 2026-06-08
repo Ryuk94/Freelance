@@ -44,16 +44,6 @@ export function useGamification() {
   const gamificationRows = useLiveQuery(() => db.gamification.filter((row) => !row.isDeleted).toArray(), []);
   const gamification = gamificationRows?.[0] ?? null;
 
-  useEffect(() => {
-    if (gamificationRows === undefined) {
-      return;
-    }
-
-    if (gamificationRows.length === 0) {
-      void db.gamification.put(createDefaultGamification());
-    }
-  }, [gamificationRows]);
-
   const addXp = useCallback(async (amount) => {
     const current = (await db.gamification.get(1)) ?? createDefaultGamification();
     const totalXp = current.currentXp + amount;

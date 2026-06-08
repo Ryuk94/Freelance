@@ -1,7 +1,6 @@
 import React from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../db';
-import { GlyphMark } from './ui/GlyphMark';
 
 const DEFAULT_PLATFORMS = ['Upwork', 'LinkedIn'];
 const DAY_MS = 24 * 60 * 60 * 1000;
@@ -28,10 +27,6 @@ function formatLastChecked(value) {
   });
 }
 
-function CardGlyph({ glyph = '[//]' }) {
-  return <GlyphMark tone="dark" />;
-}
-
 function StatusModule({ value = '1', label = 'S' }) {
   return (
     <div className="absolute bottom-4 right-4 flex items-center space-x-2 opacity-50">
@@ -39,9 +34,6 @@ function StatusModule({ value = '1', label = 'S' }) {
         <span className="border-r border-neutral-700 px-1.5 py-0.5">{label}</span>
         <span className="px-1.5 py-0.5 text-[#c4ff0e]">{value}</span>
       </div>
-      <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" className="text-neutral-500">
-        <path d="M2 2h4v4H2z M10 2h4v4h-4z M2 10h4v4H2z M10 10h4v4h-4z" />
-      </svg>
     </div>
   );
 }
@@ -52,7 +44,6 @@ function CommsCard({ row, onLogCheck }) {
 
   return (
     <div className="relative overflow-hidden rounded-2xl border border-neutral-800 bg-neutral-900/80 px-4 py-4 text-[var(--app-text)] shadow-[var(--card-shadow)]">
-      <CardGlyph />
       <StatusModule value={stale ? 'O' : '0'} label="C" />
       <div className="flex items-start justify-between gap-4">
         <div>
