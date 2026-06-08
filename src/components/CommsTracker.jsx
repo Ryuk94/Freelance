@@ -43,14 +43,14 @@ function CommsCard({ row, onLogCheck, selected = false }) {
   const statusText = stale ? 'check overdue' : 'checked within 24h';
 
   return (
-    <div className={`relative overflow-hidden rounded-xl border px-4 py-4 shadow-[var(--card-shadow)] ${selected ? 'border-black/20 bg-black text-[#c4ff0e]' : 'border-neutral-800 bg-neutral-900/80 text-[var(--app-text)]'}`}>
+    <div className={`relative overflow-hidden rounded-xl border px-4 py-4 shadow-[var(--card-shadow)] ${selected ? '!border-[#c4ff0e] !bg-[#c4ff0e] !text-black' : 'border-neutral-800 bg-neutral-900/80 text-[var(--app-text)]'}`}>
       <StatusModule value={stale ? 'O' : '0'} label="C" />
       <div className="flex items-start justify-between gap-4">
         <div>
-          <div className={`text-[10px] uppercase tracking-[0.7em] ${selected ? 'text-black/60' : 'text-neutral-500'}`}>[{row.platform.toUpperCase()}]</div>
-          <div className={`mt-2 text-sm font-bold uppercase tracking-[0.35em] ${selected ? 'text-black' : 'text-[var(--app-text)]'}`}>{statusText}</div>
+          <div className={`text-[10px] uppercase tracking-[0.7em] ${selected ? '!text-black/60' : 'text-neutral-500'}`}>[{row.platform.toUpperCase()}]</div>
+          <div className={`mt-2 text-sm font-bold uppercase tracking-[0.35em] ${selected ? '!text-black' : 'text-[var(--app-text)]'}`}>{statusText}</div>
         </div>
-        <div className={`text-right text-[10px] uppercase tracking-[0.45em] ${selected ? 'text-black/70' : 'text-neutral-500'}`}>{formatLastChecked(row.lastChecked)}</div>
+        <div className={`text-right text-[10px] uppercase tracking-[0.45em] ${selected ? '!text-black/70' : 'text-neutral-500'}`}>{formatLastChecked(row.lastChecked)}</div>
       </div>
 
       <button
@@ -82,11 +82,11 @@ export function CommsTracker({ selected = false }) {
   const activeRows = rows ?? [];
 
   return (
-    <section className={`h-full rounded-xl border p-5 shadow-[var(--card-shadow)] ${selected ? 'border-black/20 bg-black text-[#c4ff0e]' : 'border-neutral-800 bg-neutral-900/70 text-[var(--app-text)]'}`}>
+    <section className={`h-full rounded-xl border p-5 shadow-[var(--card-shadow)] ${selected ? '!border-[#c4ff0e] !bg-[#c4ff0e] !text-black' : 'border-neutral-800 bg-neutral-900/70 text-[var(--app-text)]'}`}>
       <div className="mb-4 flex items-end justify-between gap-4">
         <div>
-          <div className={`text-[10px] uppercase tracking-[0.7em] ${selected ? 'text-black/60' : 'text-neutral-500'}`}>[ COMMS ]</div>
-          <h2 className={`mt-2 font-serif text-3xl uppercase tracking-[0.08em] ${selected ? 'text-[#c4ff0e]' : 'text-[var(--app-text)]'}`}>Slacking Tracker</h2>
+          <div className={`text-[10px] uppercase tracking-[0.7em] ${selected ? '!text-black/60' : 'text-neutral-500'}`}>[ COMMS ]</div>
+          <h2 className={`mt-2 font-serif text-3xl uppercase tracking-[0.08em] ${selected ? '!text-black' : 'text-[var(--app-text)]'}`}>Slacking Tracker</h2>
         </div>
       </div>
 

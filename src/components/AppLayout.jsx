@@ -210,29 +210,33 @@ function CommandMenu({
             <path d="M3 3h16v16H3z" />
           </svg>
         </button>
-        <div className="command-node command-node-a">
-          <button type="button" onClick={() => { onAdd?.(); onClose?.(); }} className="pointer-events-auto command-pill">add</button>
+        <div className="command-row command-row-top">
+          <div className="command-node command-node-a">
+            <button type="button" onClick={() => { onAdd?.(); onClose?.(); }} className="pointer-events-auto command-pill">add</button>
+          </div>
+          <div className="command-node command-node-b">
+            <button type="button" onClick={() => { onLog?.(); onClose?.(); }} className="pointer-events-auto command-pill">log</button>
+          </div>
+          <div className="command-node command-node-c">
+            <button type="button" onClick={() => onThemeChange(theme === 'light' ? 'dark' : 'light')} className="pointer-events-auto command-pill">{theme === 'light' ? 'dark' : 'light'}</button>
+          </div>
+          <div className="command-node command-node-d">
+            <button type="button" onClick={() => { onOpenSettings?.(); onClose?.(); }} className="pointer-events-auto command-pill">settings</button>
+          </div>
         </div>
-        <div className="command-node command-node-b">
-          <button type="button" onClick={() => { onLog?.(); onClose?.(); }} className="pointer-events-auto command-pill">log</button>
-        </div>
-        <div className="command-node command-node-c">
-          <button type="button" onClick={() => onThemeChange(theme === 'light' ? 'dark' : 'light')} className="pointer-events-auto command-pill">{theme === 'light' ? 'dark' : 'light'}</button>
-        </div>
-        <div className="command-node command-node-d">
-          <button type="button" onClick={() => { onOpenSettings?.(); onClose?.(); }} className="pointer-events-auto command-pill">settings</button>
-        </div>
-        <div className="command-node command-node-e">
-          <button type="button" onClick={() => { onReset?.(); onClose?.(); }} className="pointer-events-auto command-pill">reset</button>
-        </div>
-        <div className="command-node command-node-f">
-          <button type="button" onClick={() => { onToggleNotifications?.(); onClose?.(); }} className="pointer-events-auto command-pill">{notificationsEnabled ? 'nudge off' : 'nudge on'}</button>
-        </div>
-        <div className="command-node command-node-g">
-          <button type="button" onClick={() => { onTestNotification?.(); onClose?.(); }} className="pointer-events-auto command-pill">test</button>
-        </div>
-        <div className="command-node command-node-h">
-          <button type="button" onClick={() => { onInstallApp?.(); onClose?.(); }} className="pointer-events-auto command-pill">{isAppInstalled ? 'installed' : canInstallApp ? 'install' : 'not ready'}</button>
+        <div className="command-row command-row-bottom">
+          <div className="command-node command-node-e">
+            <button type="button" onClick={() => { onReset?.(); onClose?.(); }} className="pointer-events-auto command-pill">reset</button>
+          </div>
+          <div className="command-node command-node-f">
+            <button type="button" onClick={() => { onToggleNotifications?.(); onClose?.(); }} className="pointer-events-auto command-pill">{notificationsEnabled ? 'nudge off' : 'nudge on'}</button>
+          </div>
+          <div className="command-node command-node-g">
+            <button type="button" onClick={() => { onTestNotification?.(); onClose?.(); }} className="pointer-events-auto command-pill">test</button>
+          </div>
+          <div className="command-node command-node-h">
+            <button type="button" onClick={() => { onInstallApp?.(); onClose?.(); }} className="pointer-events-auto command-pill">{isAppInstalled ? 'installed' : canInstallApp ? 'install' : 'not ready'}</button>
+          </div>
         </div>
       </div>
     </div>

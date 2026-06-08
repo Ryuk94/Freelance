@@ -67,15 +67,15 @@ function Panel({
       className={[
         'relative min-w-0 overflow-hidden rounded-xl border border-neutral-800 bg-neutral-900/80 p-5 shadow-[var(--card-shadow)] transition',
         'h-full',
-        selected ? 'bg-[#c4ff0e] text-black ring-1 ring-[#c4ff0e]' : '',
+        selected ? '!border-[#c4ff0e] !bg-[#c4ff0e] !text-black ring-1 ring-[#c4ff0e]' : '',
         span,
         className,
       ].join(' ')}
     >
       {showHeader ? (
         <div className="mb-4">
-          <div className={`text-[10px] uppercase tracking-[0.7em] ${selected ? 'text-black/60' : 'text-neutral-500'}`}>{eyebrow}</div>
-          <h2 className={`mt-2 font-serif text-2xl uppercase tracking-[0.08em] ${selected ? 'text-black' : 'text-[var(--app-text)]'}`}>{title}</h2>
+          <div className={`text-[10px] uppercase tracking-[0.7em] ${selected ? '!text-black/60' : 'text-neutral-500'}`}>{eyebrow}</div>
+          <h2 className={`mt-2 font-serif text-2xl uppercase tracking-[0.08em] ${selected ? '!text-black' : 'text-[var(--app-text)]'}`}>{title}</h2>
         </div>
       ) : null}
       <div className={`min-h-0 flex-1 ${showHeader ? '' : 'pt-0'}`}>

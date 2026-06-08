@@ -46,10 +46,10 @@ export function HuntCard({ selected = false }) {
   };
 
   return (
-    <section className={`h-full rounded-xl border p-5 ${selected ? 'border-black/20 bg-black text-[#c4ff0e]' : 'border-neutral-800 bg-white/[0.03]'}`}>
+    <section className={`h-full rounded-xl border p-5 ${selected ? '!border-[#c4ff0e] !bg-[#c4ff0e] !text-black' : 'border-neutral-800 bg-white/[0.03]'}`}>
       <div className="mb-4 relative">
-        <div className={`text-[10px] uppercase tracking-[0.7em] ${selected ? 'text-black/60' : 'text-neutral-500'}`}>[ THE HUNT ]</div>
-        <h2 className={`mt-2 font-serif text-3xl font-black uppercase tracking-[0.08em] ${selected ? 'text-[#c4ff0e]' : 'text-[#c4ff0e]'}`}>Next Follow-Ups</h2>
+        <div className={`text-[10px] uppercase tracking-[0.7em] ${selected ? '!text-black/60' : 'text-neutral-500'}`}>[ THE HUNT ]</div>
+        <h2 className={`mt-2 font-serif text-3xl font-black uppercase tracking-[0.08em] ${selected ? '!text-black' : 'text-[#c4ff0e]'}`}>Next Follow-Ups</h2>
       </div>
 
       <div className="space-y-2">
@@ -67,7 +67,7 @@ export function HuntCard({ selected = false }) {
                 className={[
                   'flex cursor-pointer items-center gap-3 px-4 py-3 transition',
                   isChecked
-                    ? 'bg-[#c4ff0e] text-black'
+                    ? '!bg-[#c4ff0e] !text-black'
                     : selected
                       ? 'bg-black text-black/75 hover:bg-black/80 hover:text-[#c4ff0e]'
                       : 'bg-white/[0.05] text-neutral-300 hover:bg-white/[0.1] hover:text-white',
