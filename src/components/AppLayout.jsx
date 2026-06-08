@@ -181,7 +181,7 @@ function QuoteBar() {
   }
 
   return (
-    <footer className="mt-4 border-t border-white/10 bg-black/70 px-4 py-3 sm:px-6">
+    <footer className="mt-4 hidden border-t border-white/10 bg-black/70 px-4 py-3 sm:block sm:px-6">
       <div className="flex flex-col gap-1 text-[11px] leading-relaxed text-neutral-300 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
         <p className="max-w-4xl">
           <span className="mr-2 text-neon-green">/</span>
@@ -274,13 +274,23 @@ export function AppLayout({
             <div>
               <div className="mt-1 text-xs uppercase tracking-[0.45em] text-neon-green">{LABELS[activeView] ?? activeView}</div>
             </div>
-            <button
-              type="button"
-              onClick={onQuickAddOpen}
-              className="bg-neon-green px-3 py-2 text-[10px] font-bold uppercase tracking-[0.5em] text-black"
-            >
-              + add
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setSettingsOpen(true)}
+                className="flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-black/85 text-sm font-bold text-white shadow-lg"
+                title="Settings"
+              >
+                ⚙
+              </button>
+              <button
+                type="button"
+                onClick={onQuickAddOpen}
+                className="bg-neon-green px-3 py-2 text-[10px] font-bold uppercase tracking-[0.5em] text-black"
+              >
+                + add
+              </button>
+            </div>
           </header>
 
           <nav className="mb-4 grid grid-cols-2 gap-2 lg:hidden sm:grid-cols-3">
@@ -323,7 +333,7 @@ export function AppLayout({
       <button
         type="button"
         onClick={() => setSettingsOpen(true)}
-        className="fixed bottom-5 left-5 z-40 rounded-full border border-white/10 bg-black/70 px-4 py-3 text-[10px] font-bold uppercase tracking-[0.45em] text-white shadow-lg transition hover:bg-black/85 hover:opacity-100 lg:bg-black/40 lg:opacity-40"
+        className="fixed bottom-5 left-5 z-40 hidden rounded-full border border-white/10 bg-black/70 px-4 py-3 text-[10px] font-bold uppercase tracking-[0.45em] text-white shadow-lg transition hover:bg-black/85 hover:opacity-100 lg:block lg:bg-black/40 lg:opacity-40"
         title="Settings"
       >
         settings
