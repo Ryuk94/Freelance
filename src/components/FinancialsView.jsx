@@ -1,4 +1,5 @@
 import React from 'react';
+import { db } from '../db';
 
 function formatCurrency(amount) {
   return new Intl.NumberFormat('en-GB', {
@@ -9,6 +10,17 @@ function formatCurrency(amount) {
 }
 
 export function FinancialsView({ financials, clients }) {
+  const handleDelete = async (entryId) => {
+    try {
+      await db.financials.update(entryId, {
+        deletedAt: Date.now(),
+        updatedAt: Date.now(),
+      });
+    } catch (error) {
+      console.error('[FreelanceOS] Failed to delete financial entry', error);
+    }
+  };
+
   return (
     <section className="border border-neutral-800 bg-white/[0.03] p-5">
       <div className="text-[10px] uppercase tracking-[0.7em] text-neutral-500">[ FINANCIALS ]</div>
@@ -25,7 +37,16 @@ export function FinancialsView({ financials, clients }) {
                     {entry.type} / {entry.status}
                   </div>
                 </div>
-                <div className="font-mono text-xl font-bold tracking-[0.2em] text-neon-green tabular-nums">{formatCurrency(entry.amount)}</div>
+                <div className="flex items-center gap-3">
+                  <div className="font-mono text-xl font-bold tracking-[0.2em] text-neon-green tabular-nums">{formatCurrency(entry.amount)}</div>
+                  <button
+                    type="button"
+                    onClick={() => handleDelete(entry.id)}
+                    className="bg-neon-red px-3 py-2 text-[10px] font-bold uppercase tracking-[0.45em] text-black transition hover:bg-neon-red/90"
+                  >
+                    remove
+                  </button>
+                </div>
               </div>
             );
           })

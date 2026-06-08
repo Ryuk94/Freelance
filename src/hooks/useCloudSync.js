@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { db } from '../db';
 import { hasSupabaseConfig, supabase } from '../lib/supabase';
 
-const TABLES = ['leads', 'clients', 'financials', 'gamification'];
+const TABLES = ['leads', 'clients', 'financials', 'receipts', 'gamification'];
 const FIVE_MINUTES = 5 * 60 * 1000;
 
 function toTimestamp(value) {
@@ -30,6 +30,10 @@ function withUpdatedAt(row, fallbackTimestamp = Date.now()) {
     ...row,
     updatedAt: toTimestamp(row.updatedAt) || fallbackTimestamp,
   };
+}
+
+function isDeleted(row) {
+  return toTimestamp(row?.deletedAt) > 0;
 }
 
 export function useCloudSync() {
@@ -65,8 +69,17 @@ export function useCloudSync() {
       const localRow = localById.get(remoteRow.id);
       const remoteTimestamp = toTimestamp(remoteRow.updatedAt);
       const localTimestamp = toTimestamp(localRow?.updatedAt);
+      const remoteDeleted = isDeleted(remoteRow);
+      const localDeleted = isDeleted(localRow);
 
-      if (!localRow || remoteTimestamp > localTimestamp) {
+      if (remoteDeleted) {
+        if (localRow && (!localDeleted || remoteTimestamp > localTimestamp)) {
+          await db[table].delete(remoteRow.id);
+        }
+        continue;
+      }
+
+      if (!localRow || localDeleted || remoteTimestamp > localTimestamp) {
         rowsToPut.push(withUpdatedAt(remoteRow, remoteTimestamp || Date.now()));
       }
     }
@@ -82,10 +95,22 @@ export function useCloudSync() {
       return;
     }
 
-    const payload = localRows.map((row) => withUpdatedAt(row));
-    const { error } = await supabase.from(table).upsert(payload, { onConflict: 'id' });
-    if (error) {
-      throw error;
+    const deletedRows = localRows.filter(isDeleted);
+    const liveRows = localRows.filter((row) => !isDeleted(row));
+
+    if (liveRows.length > 0) {
+      const payload = liveRows.map((row) => withUpdatedAt(row));
+      const { error } = await supabase.from(table).upsert(payload, { onConflict: 'id' });
+      if (error) {
+        throw error;
+      }
+    }
+
+    for (const row of deletedRows) {
+      const { error } = await supabase.from(table).delete().eq('id', row.id);
+      if (error) {
+        throw error;
+      }
     }
   }, []);
 

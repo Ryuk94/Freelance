@@ -4,12 +4,18 @@ import { db } from '../db';
 import { useGamification } from '../hooks/useGamification';
 
 export function HuntCard() {
-  const leads = useLiveQuery(() => db.leads.where('status').equals('hunting').sortBy('createdAt'), []);
+  const leads = useLiveQuery(
+    () => db.leads.where('status').equals('hunting').and((lead) => !lead.deletedAt).sortBy('createdAt'),
+    [],
+  );
   const { addXp } = useGamification();
   const [checkedIds, setCheckedIds] = useState([]);
   const timersRef = useRef(new Map());
 
-  const huntQueue = useMemo(() => (leads ?? []).filter((lead) => lead.status === 'hunting').slice(0, 3), [leads]);
+  const huntQueue = useMemo(
+    () => (leads ?? []).filter((lead) => lead.status === 'hunting' && !lead.deletedAt).slice(0, 3),
+    [leads],
+  );
 
   useEffect(() => {
     setCheckedIds((current) => current.filter((id) => huntQueue.some((lead) => lead.id === id)));

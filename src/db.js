@@ -58,6 +58,16 @@ db.version(5)
     });
   });
 
+db.version(6)
+  .stores({
+    leads: '++id, companyName, status, xpRewarded, createdAt, updatedAt, deletedAt',
+    clients: '++id, name, status, quickLinks, notes, brandKits, createdAt, updatedAt, deletedAt',
+    financials: '++id, clientId, type, amount, status, date, updatedAt, deletedAt',
+    gamification: '++id, currentLevel, currentXp, dailyStreak, updatedAt',
+    receipts: '++id, date, amount, vendor, notes, imageBase64, updatedAt, deletedAt',
+    commsTracker: '++id, platform, lastChecked, updatedAt'
+  });
+
 export const LEAD_STATUSES = ['hunting', 'pitched', 'followed_up', 'interview'];
 export const CLIENT_STATUSES = ['active', 'archived'];
 export const FINANCIAL_TYPES = ['invoice', 'goal'];

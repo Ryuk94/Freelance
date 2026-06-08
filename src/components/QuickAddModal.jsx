@@ -9,10 +9,13 @@ function toOptionId(value) {
 export function QuickAddModal({ open, onClose }) {
   const activeClients = useLiveQuery(() => db.clients.where('status').equals('active').sortBy('name'), []) ?? [];
   const [mode, setMode] = useState('lead');
+  const [clientName, setClientName] = useState('');
+  const [clientStatus, setClientStatus] = useState('active');
   const [leadCompanyName, setLeadCompanyName] = useState('');
   const [invoiceClientId, setInvoiceClientId] = useState('');
   const [invoiceAmount, setInvoiceAmount] = useState('');
   const leadInputRef = useRef(null);
+  const clientNameInputRef = useRef(null);
   const clientSelectRef = useRef(null);
   const amountInputRef = useRef(null);
 
@@ -29,6 +32,8 @@ export function QuickAddModal({ open, onClose }) {
     }
 
     setMode('lead');
+    setClientName('');
+    setClientStatus('active');
     setLeadCompanyName('');
     setInvoiceClientId('');
     setInvoiceAmount('');
@@ -81,7 +86,12 @@ export function QuickAddModal({ open, onClose }) {
       return;
     }
 
-    const focusTarget = mode === 'invoice' ? clientSelectRef.current ?? amountInputRef.current : leadInputRef.current;
+    const focusTarget =
+      mode === 'invoice'
+        ? clientSelectRef.current ?? amountInputRef.current
+        : mode === 'client'
+          ? clientNameInputRef.current
+          : leadInputRef.current;
 
     const frameId = window.requestAnimationFrame(() => {
       focusTarget?.focus?.();
@@ -118,6 +128,35 @@ export function QuickAddModal({ open, onClose }) {
       onClose();
     } catch (error) {
       console.error('[FreelanceOS] Failed to add lead', error);
+    }
+  };
+
+  const handleClientSubmit = async (event) => {
+    event.preventDefault();
+
+    const name = clientName.trim();
+    if (!name) {
+      return;
+    }
+
+    const now = Date.now();
+
+    try {
+      await db.clients.add({
+        name,
+        status: clientStatus,
+        quickLinks: [],
+        notes: '',
+        brandKits: [],
+        createdAt: now,
+        updatedAt: now,
+        deletedAt: 0,
+      });
+      setClientName('');
+      setClientStatus('active');
+      onClose();
+    } catch (error) {
+      console.error('[FreelanceOS] Failed to add client', error);
     }
   };
 
@@ -187,6 +226,16 @@ export function QuickAddModal({ open, onClose }) {
           <div className="inline-flex border border-neutral-800 bg-white/[0.03] p-1">
             <button
               type="button"
+              onClick={() => setMode('client')}
+              className={[
+                'px-4 py-2 text-xs font-bold uppercase tracking-[0.45em] transition',
+                mode === 'client' ? 'bg-neon-green text-black' : 'text-neutral-400 hover:text-neon-green',
+              ].join(' ')}
+            >
+              New Client
+            </button>
+            <button
+              type="button"
               onClick={() => setMode('lead')}
               className={[
                 'px-4 py-2 text-xs font-bold uppercase tracking-[0.45em] transition',
@@ -209,7 +258,39 @@ export function QuickAddModal({ open, onClose }) {
         </div>
 
         <div className="px-5 py-5">
-          {mode === 'lead' ? (
+          {mode === 'client' ? (
+            <form className="space-y-4" onSubmit={handleClientSubmit}>
+              <label className="block space-y-2">
+                <span className="text-[10px] uppercase tracking-[0.45em] text-neutral-500">Client Name</span>
+                <input
+                  ref={clientNameInputRef}
+                  value={clientName}
+                  onChange={(event) => setClientName(event.target.value)}
+                  placeholder="North Star Studio"
+                  className="w-full border border-neutral-800 bg-black/60 px-3 py-3 text-xs uppercase tracking-[0.35em] text-neon-green outline-none placeholder:text-neutral-600 focus:border-neon-green"
+                />
+              </label>
+
+              <label className="block space-y-2">
+                <span className="text-[10px] uppercase tracking-[0.45em] text-neutral-500">Status</span>
+                <select
+                  value={clientStatus}
+                  onChange={(event) => setClientStatus(event.target.value)}
+                  className="w-full border border-neutral-800 bg-black/60 px-3 py-3 text-xs uppercase tracking-[0.35em] text-neon-green outline-none focus:border-neon-green"
+                >
+                  <option value="active">Active</option>
+                  <option value="archived">Archived</option>
+                </select>
+              </label>
+
+              <button
+                type="submit"
+                className="w-full border border-neon-green/30 bg-neon-green/10 px-4 py-3 text-xs font-bold uppercase tracking-[0.55em] text-neon-green transition hover:bg-neon-green hover:text-black"
+              >
+                add client
+              </button>
+            </form>
+          ) : mode === 'lead' ? (
             <form className="space-y-4" onSubmit={handleLeadSubmit}>
               <label className="block space-y-2">
                 <span className="text-[10px] uppercase tracking-[0.45em] text-neutral-500">Company Name</span>

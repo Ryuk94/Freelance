@@ -48,6 +48,11 @@ export function App() {
     });
   };
 
+  const visibleLeads = (leads ?? []).filter((lead) => !lead.deletedAt);
+  const visibleClients = (clients ?? []).filter((client) => !client.deletedAt);
+  const visibleFinancials = (financials ?? []).filter((entry) => !entry.deletedAt);
+  const visibleReceipts = (receipts ?? []).filter((receipt) => !receipt.deletedAt);
+
   useEffect(() => {
     window.localStorage.setItem(THEME_STORAGE_KEY, theme);
   }, [theme]);
@@ -66,9 +71,9 @@ export function App() {
       return;
     }
 
-    const firstClient = clients?.find((client) => client.status === 'active') ?? clients?.[0];
+    const firstClient = visibleClients.find((client) => client.status === 'active') ?? visibleClients[0];
     setSelectedClientId(firstClient?.id ?? null);
-  }, [activeView, clients, selectedClientId]);
+  }, [activeView, selectedClientId, visibleClients]);
 
   const handleOpenClient = (clientId) => {
     setSelectedClientId(clientId);
@@ -92,14 +97,14 @@ export function App() {
         onResetLocalData={resetLocalData}
       >
         {activeView === 'dashboard' && (
-          <Dashboard clients={clients ?? []} financials={financials ?? []} onOpenClient={handleOpenClient} />
+          <Dashboard clients={visibleClients} financials={visibleFinancials} onOpenClient={handleOpenClient} />
         )}
         {activeView === 'clients' && (
-          <ClientsView clients={clients ?? []} selectedClientId={selectedClientId} onSelectClient={setSelectedClientId} />
+          <ClientsView clients={visibleClients} selectedClientId={selectedClientId} onSelectClient={setSelectedClientId} />
         )}
-        {activeView === 'leads' && <LeadsView leads={leads ?? []} />}
-        {activeView === 'receipts' && <ReceiptsView receipts={receipts ?? []} />}
-        {activeView === 'financials' && <FinancialsView financials={financials ?? []} clients={clients ?? []} />}
+        {activeView === 'leads' && <LeadsView leads={visibleLeads} />}
+        {activeView === 'receipts' && <ReceiptsView receipts={visibleReceipts} />}
+        {activeView === 'financials' && <FinancialsView financials={visibleFinancials} clients={visibleClients} />}
       </AppLayout>
 
       <QuickAddModal open={quickAddOpen} onClose={() => setQuickAddOpen(false)} />

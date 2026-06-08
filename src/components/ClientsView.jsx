@@ -239,6 +239,21 @@ export function ClientsView({ clients, selectedClientId, onSelectClient }) {
     }
   };
 
+  const handleDelete = async () => {
+    if (!selectedClient) {
+      return;
+    }
+
+    try {
+      await db.clients.update(selectedClient.id, {
+        deletedAt: Date.now(),
+        updatedAt: Date.now(),
+      });
+    } catch (error) {
+      console.error('[FreelanceOS] Failed to delete client', error);
+    }
+  };
+
   if (!selectedClient) {
     return (
       <section className="bg-white/[0.03] p-5">
@@ -294,6 +309,13 @@ export function ClientsView({ clients, selectedClientId, onSelectClient }) {
               className="bg-neon-red px-4 py-2 text-[10px] font-bold uppercase tracking-[0.45em] text-black transition hover:bg-neon-red/90 disabled:cursor-not-allowed disabled:opacity-40"
             >
               archive
+            </button>
+            <button
+              type="button"
+              onClick={handleDelete}
+              className="bg-neon-red px-4 py-2 text-[10px] font-bold uppercase tracking-[0.45em] text-black transition hover:bg-neon-red/90"
+            >
+              remove
             </button>
           </div>
         </header>

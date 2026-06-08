@@ -71,6 +71,17 @@ export function ReceiptsView({ receipts }) {
     }
   };
 
+  const handleDelete = async (receiptId) => {
+    try {
+      await db.receipts.update(receiptId, {
+        deletedAt: Date.now(),
+        updatedAt: Date.now(),
+      });
+    } catch (error) {
+      console.error('[FreelanceOS] Failed to delete receipt', error);
+    }
+  };
+
   return (
     <div className="space-y-4">
       <section className="border border-neutral-800 bg-white/[0.03] p-5">
@@ -174,6 +185,13 @@ export function ReceiptsView({ receipts }) {
                   className="mt-4 max-h-48 w-full border border-neutral-800 object-cover"
                 />
               ) : null}
+              <button
+                type="button"
+                onClick={() => handleDelete(receipt.id)}
+                className="mt-4 bg-neon-red px-3 py-2 text-[10px] font-bold uppercase tracking-[0.45em] text-black transition hover:bg-neon-red/90"
+              >
+                remove
+              </button>
             </article>
           ))
         ) : (
