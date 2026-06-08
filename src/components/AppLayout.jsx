@@ -216,6 +216,14 @@ export function AppLayout({
   onThemeChange,
   onModeChange,
   onResetLocalData,
+  canInstallApp,
+  isAppInstalled,
+  onInstallApp,
+  notificationsEnabled,
+  notificationsPermission,
+  onEnableNotifications,
+  onTestNotification,
+  onToggleNotifications,
   children,
 }) {
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -369,6 +377,26 @@ export function AppLayout({
                 label={mode === 'light' ? 'Light Mode: On' : 'Light Mode: Off'}
                 description="Switch the app between dark and light presentation."
                 onClick={() => onModeChange(mode === 'light' ? 'dark' : 'light')}
+              />
+              <SettingsButton
+                label={canInstallApp ? 'Install App' : isAppInstalled ? 'App Installed' : 'Install Not Ready'}
+                description="Add FreelanceOS to your Android home screen or desktop."
+                onClick={onInstallApp}
+              />
+              <SettingsButton
+                label={notificationsEnabled ? `Notifications: ${notificationsPermission}` : 'Enable Notifications'}
+                description="Receive deadline and follow-up nudges in Chrome."
+                onClick={onEnableNotifications}
+              />
+              <SettingsButton
+                label="Test Notification"
+                description="Send a quick local notification to confirm Chrome support."
+                onClick={onTestNotification}
+              />
+              <SettingsButton
+                label={notificationsEnabled ? 'Pause NUDGES' : 'Resume NUDGES'}
+                description="Temporarily mute or resume deadline reminders."
+                onClick={onToggleNotifications}
               />
 
               <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">

@@ -13,6 +13,8 @@ import { useCloudSync } from './hooks/useCloudSync';
 const NAV_ITEMS = ['dashboard', 'clients', 'leads', 'receipts', 'financials'];
 const THEME_STORAGE_KEY = 'freelanceos.theme';
 const MODE_STORAGE_KEY = 'freelanceos.mode';
+const NOTIFICATION_STORAGE_KEY = 'freelanceos.notificationsEnabled';
+const NOTIFIED_ITEMS_STORAGE_KEY = 'freelanceos.notifiedItems';
 
 function getStoredSetting(key, fallback) {
   if (typeof window === 'undefined') {
@@ -21,6 +23,185 @@ function getStoredSetting(key, fallback) {
 
   const value = window.localStorage.getItem(key);
   return value ?? fallback;
+}
+
+function getStoredJson(key, fallback) {
+  if (typeof window === 'undefined') {
+    return fallback;
+  }
+
+  try {
+    const raw = window.localStorage.getItem(key);
+    return raw ? JSON.parse(raw) : fallback;
+  } catch {
+    return fallback;
+  }
+}
+
+function useInstallPrompt() {
+  const [deferredPrompt, setDeferredPrompt] = useState(null);
+  const [isInstalled, setIsInstalled] = useState(() => {
+    if (typeof window === 'undefined') {
+      return false;
+    }
+
+    return window.matchMedia?.('(display-mode: standalone)')?.matches || window.navigator.standalone === true;
+  });
+
+  useEffect(() => {
+    const handleBeforeInstallPrompt = (event) => {
+      event.preventDefault();
+      setDeferredPrompt(event);
+    };
+
+    const handleAppInstalled = () => {
+      setIsInstalled(true);
+      setDeferredPrompt(null);
+    };
+
+    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+    window.addEventListener('appinstalled', handleAppInstalled);
+
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+      window.removeEventListener('appinstalled', handleAppInstalled);
+    };
+  }, []);
+
+  const promptInstall = async () => {
+    if (!deferredPrompt) {
+      return { ok: false, reason: 'unavailable' };
+    }
+
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    setDeferredPrompt(null);
+    return { ok: outcome === 'accepted', outcome };
+  };
+
+  return {
+    canInstall: Boolean(deferredPrompt),
+    isInstalled,
+    promptInstall,
+  };
+}
+
+function useReminderNotifications({ leads, financials }) {
+  const [enabled, setEnabled] = useState(() => {
+    if (typeof window === 'undefined') {
+      return false;
+    }
+
+    return window.localStorage.getItem(NOTIFICATION_STORAGE_KEY) === '1';
+  });
+  const [permission, setPermission] = useState(() => (typeof Notification !== 'undefined' ? Notification.permission : 'default'));
+  const notifiedItemsRef = useState(() => new Set(getStoredJson(NOTIFIED_ITEMS_STORAGE_KEY, [])))[0];
+
+  useEffect(() => {
+    window.localStorage.setItem(NOTIFICATION_STORAGE_KEY, enabled ? '1' : '0');
+  }, [enabled]);
+
+  useEffect(() => {
+    window.localStorage.setItem(NOTIFIED_ITEMS_STORAGE_KEY, JSON.stringify(Array.from(notifiedItemsRef)));
+  });
+
+  useEffect(() => {
+    if (typeof Notification === 'undefined') {
+      return;
+    }
+
+    setPermission(Notification.permission);
+  }, []);
+
+  const requestPermission = async () => {
+    if (typeof Notification === 'undefined') {
+      return { ok: false, reason: 'unsupported' };
+    }
+
+    const nextPermission = await Notification.requestPermission();
+    setPermission(nextPermission);
+    const nextEnabled = nextPermission === 'granted';
+    setEnabled(nextEnabled);
+    return { ok: nextEnabled, permission: nextPermission };
+  };
+
+  const notify = async (title, body) => {
+    if (typeof Notification === 'undefined' || Notification.permission !== 'granted') {
+      return false;
+    }
+
+    try {
+      const registration = await navigator.serviceWorker?.ready;
+      if (registration?.showNotification) {
+        await registration.showNotification(title, {
+          body,
+          icon: '/pwa.svg',
+          badge: '/pwa.svg',
+          tag: `freelanceos-${title}`,
+        });
+      } else {
+        new Notification(title, {
+          body,
+          icon: '/pwa.svg',
+          tag: `freelanceos-${title}`,
+        });
+      }
+
+      return true;
+    } catch (error) {
+      console.error('[FreelanceOS] Notification failed', error);
+      return false;
+    }
+  };
+
+  useEffect(() => {
+    if (!enabled || permission !== 'granted') {
+      return;
+    }
+
+    const overdueLead = (leads ?? []).find((lead) => lead.status === 'hunting' && !lead.deletedAt && !notifiedItemsRef.has(`lead-${lead.id}`));
+    const overdueInvoice = (financials ?? []).find(
+      (entry) =>
+        entry.type === 'invoice' &&
+        entry.status !== 'paid' &&
+        !entry.deletedAt &&
+        !notifiedItemsRef.has(`invoice-${entry.id}`),
+    );
+
+    if (!overdueLead && !overdueInvoice) {
+      return;
+    }
+
+    const timerId = window.setInterval(async () => {
+      const nextLead = (leads ?? []).find((lead) => lead.status === 'hunting' && !lead.deletedAt && !notifiedItemsRef.has(`lead-${lead.id}`));
+      if (nextLead) {
+        notifiedItemsRef.add(`lead-${nextLead.id}`);
+        await notify('Follow-up reminder', `${nextLead.companyName} is still waiting for a follow-up.`);
+      }
+
+      const nextInvoice = (financials ?? []).find(
+        (entry) =>
+          entry.type === 'invoice' &&
+          entry.status !== 'paid' &&
+          !entry.deletedAt &&
+          !notifiedItemsRef.has(`invoice-${entry.id}`),
+      );
+      if (nextInvoice) {
+        notifiedItemsRef.add(`invoice-${nextInvoice.id}`);
+        await notify('Invoice reminder', `Invoice ${nextInvoice.id} is still open.`);
+      }
+    }, 15 * 60 * 1000);
+
+    return () => window.clearInterval(timerId);
+  }, [enabled, financials, leads, notify, notifiedItemsRef, permission]);
+
+  return {
+    enabled,
+    permission,
+    requestPermission,
+    setEnabled,
+    notify,
+  };
 }
 
 export function App() {
@@ -35,6 +216,8 @@ export function App() {
   const [quickAddOpen, setQuickAddOpen] = useState(false);
   const [theme, setTheme] = useState(() => getStoredSetting(THEME_STORAGE_KEY, 'neonos'));
   const [mode, setMode] = useState(() => getStoredSetting(MODE_STORAGE_KEY, 'dark'));
+  const installPrompt = useInstallPrompt();
+  const notifications = useReminderNotifications({ leads: leads ?? [], financials: financials ?? [] });
   const resetLocalData = () => {
     void db.transaction('rw', db.leads, db.clients, db.financials, db.gamification, db.receipts, db.commsTracker, async () => {
       await Promise.all([
@@ -95,6 +278,14 @@ export function App() {
         onThemeChange={setTheme}
         onModeChange={setMode}
         onResetLocalData={resetLocalData}
+        canInstallApp={installPrompt.canInstall}
+        isAppInstalled={installPrompt.isInstalled}
+        onInstallApp={installPrompt.promptInstall}
+        notificationsEnabled={notifications.enabled}
+        notificationsPermission={notifications.permission}
+        onEnableNotifications={notifications.requestPermission}
+        onTestNotification={() => notifications.notify('FreelanceOS test', 'Notifications are working on this device.')}
+        onToggleNotifications={() => notifications.setEnabled((current) => !current)}
       >
         {activeView === 'dashboard' && (
           <Dashboard clients={visibleClients} financials={visibleFinancials} onOpenClient={handleOpenClient} />
