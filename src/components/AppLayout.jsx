@@ -297,7 +297,7 @@ export function AppLayout({
         <aside className="hidden w-[320px] shrink-0 flex-col gap-4 bg-[var(--panel-bg)] p-4 lg:flex">
           <div className="rounded-xl border border-neutral-800 bg-[var(--card-bg)] p-3 shadow-[var(--card-shadow)]">
             <LogoMark />
-            <h1 className="font-display mt-2 max-w-[11ch] text-[2.3rem] font-black leading-[0.82] tracking-[0.01em] text-[#c4ff0e]">
+            <h1 className="font-display mt-2 max-w-[11ch] text-[2.3rem] font-black leading-[0.82] tracking-[0.01em] normal-case text-[#c4ff0e]">
               FreelanceOS
             </h1>
           </div>
@@ -336,7 +336,7 @@ export function AppLayout({
                 <LogoMark />
                 <div className="min-w-0">
                   <div className="text-[9px] uppercase tracking-[0.55em] text-neutral-500">[ SYSTEM ]</div>
-                  <h1 className="font-display mt-1 truncate text-[2rem] font-black leading-[0.95] tracking-[0.02em] text-[#c4ff0e] sm:text-[2.35rem]">
+                  <h1 className="font-display mt-1 truncate text-[2rem] font-black leading-[0.95] tracking-[0.02em] normal-case text-[#c4ff0e] sm:text-[2.35rem]">
                     FreelanceOS
                   </h1>
                 </div>

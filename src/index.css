@@ -272,16 +272,16 @@ body {
 }
 
 .command-pill {
-  min-width: 6.6rem;
+  min-width: 6.95rem;
   border-radius: 9999px;
   border: 1px solid rgba(196, 255, 14, 0.28);
   background: rgba(10, 12, 16, 0.92);
   color: #f7ffe0;
   font-size: 0.625rem;
   font-weight: 900;
-  letter-spacing: 0.34em;
+  letter-spacing: 0.36em;
   line-height: 1;
-  padding: 0.92rem 1.3rem;
+  padding: 0.92rem 1.45rem;
   text-transform: uppercase;
   box-shadow: 0 16px 30px rgba(0, 0, 0, 0.38);
 }
@@ -327,14 +327,14 @@ body {
   height: 11.6rem;
 }
 
-.command-node-a { transform: translate3d(2.8rem, -2.95rem, 0) scale(0.92); animation-delay: 20ms; }
-.command-node-b { transform: translate3d(7.5rem, -2.95rem, 0) scale(0.92); animation-delay: 40ms; }
-.command-node-c { transform: translate3d(12.2rem, -2.95rem, 0) scale(0.92); animation-delay: 60ms; }
-.command-node-d { transform: translate3d(16.9rem, -2.95rem, 0) scale(0.92); animation-delay: 80ms; }
-.command-node-e { transform: translate3d(3.7rem, -7.1rem, 0) scale(0.92); animation-delay: 100ms; }
-.command-node-f { transform: translate3d(8.4rem, -7.1rem, 0) scale(0.92); animation-delay: 120ms; }
-.command-node-g { transform: translate3d(13.1rem, -7.1rem, 0) scale(0.92); animation-delay: 140ms; }
-.command-node-h { transform: translate3d(17.8rem, -7.1rem, 0) scale(0.92); animation-delay: 160ms; }
+.command-node-a { transform: translate3d(2.55rem, -2.95rem, 0) scale(0.92); animation-delay: 20ms; }
+.command-node-b { transform: translate3d(7.4rem, -2.95rem, 0) scale(0.92); animation-delay: 40ms; }
+.command-node-c { transform: translate3d(12.25rem, -2.95rem, 0) scale(0.92); animation-delay: 60ms; }
+.command-node-d { transform: translate3d(17.1rem, -2.95rem, 0) scale(0.92); animation-delay: 80ms; }
+.command-node-e { transform: translate3d(3.35rem, -7.1rem, 0) scale(0.92); animation-delay: 100ms; }
+.command-node-f { transform: translate3d(8.2rem, -7.1rem, 0) scale(0.92); animation-delay: 120ms; }
+.command-node-g { transform: translate3d(13.05rem, -7.1rem, 0) scale(0.92); animation-delay: 140ms; }
+.command-node-h { transform: translate3d(17.9rem, -7.1rem, 0) scale(0.92); animation-delay: 160ms; }
 
 @keyframes commandPulse {
   from {
