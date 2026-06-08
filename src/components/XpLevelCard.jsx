@@ -26,7 +26,7 @@ export function XpLevelCard() {
           <span>{xpProgress}%</span>
         </div>
         <div className="mt-3 h-3 overflow-hidden bg-black">
-          <div className="h-full bg-[linear-gradient(90deg,#14b8a6,#2563eb)] transition-all duration-500 ease-out" style={{ width: `${xpProgress}%` }} />
+          <div className="h-full bg-[linear-gradient(90deg,#c4ff0e,#f97316)] transition-all duration-500 ease-out" style={{ width: `${xpProgress}%` }} />
         </div>
         <div className="mt-3 text-[10px] uppercase tracking-[0.45em] text-neutral-500">
           {xpProgress}/100 XP to next level

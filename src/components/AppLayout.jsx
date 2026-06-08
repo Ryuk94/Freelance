@@ -197,85 +197,43 @@ function CommandMenu({
 }) {
   if (!open) return null;
   return (
-    <div className="absolute left-4 top-20 z-40 w-[min(92vw,22rem)] rounded-2xl border border-neutral-800 bg-[#0b0d11] p-3 shadow-[var(--card-shadow)]">
-      <div className="grid gap-2">
+    <div className="pointer-events-none fixed inset-0 z-50">
+      <div className="absolute bottom-6 left-6 h-72 w-72">
+        <div className="command-orb command-orb-open" />
         <button
           type="button"
-          onClick={() => {
-            onAdd?.();
-            onClose?.();
-          }}
-          className="rounded-xl border border-neutral-800 bg-white/[0.03] px-4 py-3 text-left text-xs font-bold uppercase tracking-[0.45em] text-[var(--app-text)]"
+          onClick={onClose}
+          className="absolute bottom-0 left-0 flex h-14 w-14 items-center justify-center rounded-full border border-[#c4ff0e] bg-[#c4ff0e] text-black shadow-[0_18px_38px_rgba(0,0,0,0.45)]"
+          aria-label="Close commands"
         >
-          Add
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="currentColor">
+            <path d="M3 3h16v16H3z" />
+          </svg>
         </button>
-        <button
-          type="button"
-          onClick={() => {
-            onLog?.();
-            onClose?.();
-          }}
-          className="rounded-xl border border-neutral-800 bg-white/[0.03] px-4 py-3 text-left text-xs font-bold uppercase tracking-[0.45em] text-[var(--app-text)]"
-        >
-          Log
-        </button>
-        <button
-          type="button"
-          onClick={() => onThemeChange(theme === 'light' ? 'dark' : 'light')}
-          className="rounded-xl border border-neutral-800 bg-white/[0.03] px-4 py-3 text-left text-xs font-bold uppercase tracking-[0.45em] text-[var(--app-text)]"
-        >
-          {theme === 'light' ? 'Dark Mode' : 'Light Mode'}
-        </button>
-        <button
-          type="button"
-          onClick={() => {
-            onReset?.();
-            onClose?.();
-          }}
-          className="rounded-xl border border-neutral-800 bg-white/[0.03] px-4 py-3 text-left text-xs font-bold uppercase tracking-[0.45em] text-[var(--app-text)]"
-        >
-          Reset local data
-        </button>
-        <button
-          type="button"
-          onClick={() => {
-            onOpenSettings?.();
-            onClose?.();
-          }}
-          className="rounded-xl border border-neutral-800 bg-white/[0.03] px-4 py-3 text-left text-xs font-bold uppercase tracking-[0.45em] text-[var(--app-text)]"
-        >
-          Settings
-        </button>
-        <button
-          type="button"
-          onClick={() => {
-            onToggleNotifications?.();
-            onClose?.();
-          }}
-          className="rounded-xl border border-neutral-800 bg-white/[0.03] px-4 py-3 text-left text-xs font-bold uppercase tracking-[0.45em] text-[var(--app-text)]"
-        >
-          {notificationsEnabled ? 'Pause Nudges' : 'Resume Nudges'}
-        </button>
-        <button
-          type="button"
-          onClick={() => {
-            onTestNotification?.();
-            onClose?.();
-          }}
-          className="rounded-xl border border-neutral-800 bg-white/[0.03] px-4 py-3 text-left text-xs font-bold uppercase tracking-[0.45em] text-[var(--app-text)]"
-        >
-          Test Notification
-        </button>
-        <button
-          type="button"
-          onClick={() => {
-            onInstallApp?.();
-            onClose?.();
-          }}
-          className="rounded-xl border border-neutral-800 bg-white/[0.03] px-4 py-3 text-left text-xs font-bold uppercase tracking-[0.45em] text-[var(--app-text)]"
-        >
-          {isAppInstalled ? 'App Installed' : canInstallApp ? 'Install App' : 'Install Not Ready'}
-        </button>
+        <div className="command-node command-node-a">
+          <button type="button" onClick={() => { onAdd?.(); onClose?.(); }} className="command-pill">add</button>
+        </div>
+        <div className="command-node command-node-b">
+          <button type="button" onClick={() => { onLog?.(); onClose?.(); }} className="command-pill">log</button>
+        </div>
+        <div className="command-node command-node-c">
+          <button type="button" onClick={() => onThemeChange(theme === 'light' ? 'dark' : 'light')} className="command-pill">{theme === 'light' ? 'dark' : 'light'}</button>
+        </div>
+        <div className="command-node command-node-d">
+          <button type="button" onClick={() => { onOpenSettings?.(); onClose?.(); }} className="command-pill">settings</button>
+        </div>
+        <div className="command-node command-node-e">
+          <button type="button" onClick={() => { onReset?.(); onClose?.(); }} className="command-pill">reset</button>
+        </div>
+        <div className="command-node command-node-f">
+          <button type="button" onClick={() => { onToggleNotifications?.(); onClose?.(); }} className="command-pill">{notificationsEnabled ? 'nudge off' : 'nudge on'}</button>
+        </div>
+        <div className="command-node command-node-g">
+          <button type="button" onClick={() => { onTestNotification?.(); onClose?.(); }} className="command-pill">test</button>
+        </div>
+        <div className="command-node command-node-h">
+          <button type="button" onClick={() => { onInstallApp?.(); onClose?.(); }} className="command-pill">{isAppInstalled ? 'installed' : canInstallApp ? 'install' : 'not ready'}</button>
+        </div>
       </div>
     </div>
   );
@@ -292,7 +250,7 @@ function SyncIndicator({ status, lastSynced, onForceSync }) {
       title={`Last synced ${label}`}
     >
       <span className="flex items-center gap-3">
-        <span className={`h-2.5 w-2.5 rounded-full ${status === 'error' ? 'bg-[#f97316]' : 'bg-[#14b8a6]'}`} />
+        <span className={`h-2.5 w-2.5 rounded-full ${status === 'error' ? 'bg-[#f97316]' : 'bg-[#c4ff0e]'}`} />
         <span>CLOUD</span>
       </span>
       <span className="text-[10px] tracking-[0.45em] text-neutral-500">{statusLabel}</span>
@@ -340,32 +298,7 @@ export function AppLayout({
             </h1>
           </div>
 
-          <div className="relative">
-            <div className="absolute left-0 top-0">
-              <CommandButton onOpenMenu={() => setCommandsOpen((current) => !current)} />
-            </div>
-            <div className="pl-16">
-              <QuickDock />
-            </div>
-            <CommandMenu
-              open={commandsOpen}
-              onClose={() => setCommandsOpen(false)}
-              onAdd={onLogOpen}
-              onLog={onLogOpen}
-              onReset={onResetLocalData}
-              theme={theme}
-              onThemeChange={onThemeChange}
-              onOpenSettings={() => setSettingsOpen(true)}
-              onEnableNotifications={onEnableNotifications}
-              onTestNotification={onTestNotification}
-              onToggleNotifications={onToggleNotifications}
-              onInstallApp={onInstallApp}
-              canInstallApp={canInstallApp}
-              isAppInstalled={isAppInstalled}
-              notificationsEnabled={notificationsEnabled}
-              notificationsPermission={notificationsPermission}
-            />
-          </div>
+          <QuickDock />
 
           <nav className="space-y-2">
             {navItems.map((item) => {
@@ -461,6 +394,29 @@ export function AppLayout({
           <QuoteBar />
         </div>
       </div>
+
+      <div className="fixed bottom-6 left-6 z-40">
+        <CommandButton onOpenMenu={() => setCommandsOpen((current) => !current)} />
+      </div>
+
+      <CommandMenu
+        open={commandsOpen}
+        onClose={() => setCommandsOpen(false)}
+        onAdd={onLogOpen}
+        onLog={onLogOpen}
+        onReset={onResetLocalData}
+        theme={theme}
+        onThemeChange={onThemeChange}
+        onOpenSettings={() => setSettingsOpen(true)}
+        onEnableNotifications={onEnableNotifications}
+        onTestNotification={onTestNotification}
+        onToggleNotifications={onToggleNotifications}
+        onInstallApp={onInstallApp}
+        canInstallApp={canInstallApp}
+        isAppInstalled={isAppInstalled}
+        notificationsEnabled={notificationsEnabled}
+        notificationsPermission={notificationsPermission}
+      />
 
       {settingsOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-4 py-6 backdrop-blur-sm">

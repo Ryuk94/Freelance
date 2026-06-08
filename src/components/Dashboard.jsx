@@ -22,7 +22,7 @@ function getMonthKey(date) {
 
 function StatusGlyph() {
   return (
-    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" className="text-neutral-500">
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" className="text-black">
       <path d="M2 2h4v4H2zM10 2h4v4h-4zM2 10h4v4H2zM10 10h4v4h-4z" />
     </svg>
   );
@@ -31,9 +31,9 @@ function StatusGlyph() {
 function StatusModule({ value = '1', label = 'S' }) {
   return (
     <div className="absolute bottom-4 right-4 flex items-center gap-2 opacity-50">
-      <div className="flex rounded-sm border border-neutral-700 text-[10px] font-mono tracking-widest text-neutral-400">
-        <span className="border-r border-neutral-700 px-1.5 py-0.5">{label}</span>
-        <span className="px-1.5 py-0.5 text-[#c4ff0e]">{value}</span>
+      <div className="flex rounded-md border border-black/30 text-[10px] font-mono tracking-widest text-black">
+        <span className="border-r border-black/30 px-1.5 py-0.5">{label}</span>
+        <span className="px-1.5 py-0.5">{value}</span>
       </div>
     </div>
   );
@@ -64,15 +64,15 @@ function Panel({
       onClick={onClick}
       onDoubleClick={onDoubleClick}
       className={[
-        'relative min-w-0 rounded-2xl border border-neutral-800 bg-neutral-900/80 p-5 shadow-[var(--card-shadow)] transition',
-        selected ? 'ring-1 ring-[#14b8a6]/60' : '',
+        'relative min-w-0 overflow-hidden rounded-xl border border-neutral-800 bg-neutral-900/80 p-5 shadow-[var(--card-shadow)] transition',
+        selected ? 'bg-[#c4ff0e] text-black ring-1 ring-[#c4ff0e]' : '',
         span,
         className,
       ].join(' ')}
     >
       <div className="mb-4">
-        <div className="text-[10px] uppercase tracking-[0.7em] text-neutral-500">{eyebrow}</div>
-        <h2 className="mt-2 font-serif text-2xl uppercase tracking-[0.08em] text-[var(--app-text)]">{title}</h2>
+        <div className={`text-[10px] uppercase tracking-[0.7em] ${selected ? 'text-black/60' : 'text-neutral-500'}`}>{eyebrow}</div>
+        <h2 className={`mt-2 font-serif text-2xl uppercase tracking-[0.08em] ${selected ? 'text-black' : 'text-[var(--app-text)]'}`}>{title}</h2>
       </div>
       {children}
     </article>
@@ -153,6 +153,13 @@ function getStoredWidgetVisibility() {
   return { ...DEFAULT_WIDGETS, ...(parsed && typeof parsed === 'object' ? parsed : {}) };
 }
 
+function getDayGreeting() {
+  const hour = new Date().getHours();
+  if (hour < 12) return 'GOOD MORNING';
+  if (hour < 18) return 'GOOD AFTERNOON';
+  return 'GOOD EVENING';
+}
+
 export function Dashboard({ clients, financials, onOpenClient }) {
   const [widgetOrder, setWidgetOrder] = useState(() => getStoredWidgetOrder());
   const [widgetSpans, setWidgetSpans] = useState(() => getStoredWidgetSpans());
@@ -166,6 +173,7 @@ export function Dashboard({ clients, financials, onOpenClient }) {
   const unpaidAmount = unpaidInvoices.reduce((sum, item) => sum + Number(item.amount || 0), 0);
   const burnRate = totalInvoiceAmount > 0 ? Math.round((unpaidAmount / totalInvoiceAmount) * 100) : 0;
   const todayLabel = new Date().toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+  const greeting = getDayGreeting();
 
   useEffect(() => {
     try {
@@ -234,22 +242,25 @@ export function Dashboard({ clients, financials, onOpenClient }) {
         }
       },
       onDrop: handleDrop(widgetId),
-      className: dragOverWidget === widgetId ? 'ring-2 ring-[#14b8a6]/70' : '',
+      className: dragOverWidget === widgetId ? 'ring-2 ring-[#c4ff0e]/70' : '',
     };
 
     switch (widgetId) {
       case 'welcome':
         return (
-          <Panel key={widgetId} title="Today" eyebrow="[ TODAY ]" {...common} draggable>
+          <Panel key={widgetId} title={todayLabel} eyebrow={`[ ${greeting} ]`} {...common} draggable>
             <div className="space-y-3">
-              <p className="max-w-4xl text-sm leading-7 text-neutral-300">
+              <p className={`max-w-4xl text-sm leading-7 ${selected ? 'text-black/85' : 'text-neutral-300'}`}>
                 {activeClients.length === 0 && unpaidInvoices.length === 0
-                  ? 'The board is quiet right now. Use today to add new leads, capture invoices, or polish your workspace.'
+                  ? 'The air is still. A small signal can shift the whole board if you send it first.'
                   : `You have ${activeClients.length} active clients and ${unpaidInvoices.length} open invoices worth ${formatCurrency(unpaidAmount)}. Current burn rate is ${burnRate}%.`}
               </p>
-              <div className="flex flex-wrap gap-2 text-[10px] uppercase tracking-[0.45em] text-neutral-500">
-                <span className="rounded-full border border-neutral-800 bg-white/[0.03] px-3 py-2">double click to resize</span>
-                <span className="rounded-full border border-neutral-800 bg-white/[0.03] px-3 py-2">drag in real time</span>
+              <div className={`text-sm uppercase tracking-[0.25em] ${selected ? 'text-black/70' : 'text-neutral-400'}`}>
+                {greeting === 'GOOD MORNING'
+                  ? 'Start clean. Wake the system carefully.'
+                  : greeting === 'GOOD AFTERNOON'
+                    ? 'Keep the signal sharp. Finish the next precise move.'
+                    : 'The work slows down. The signal should not.'}
               </div>
             </div>
             {selected && <div className="absolute bottom-4 right-4 opacity-60"><StatusGlyph /></div>}
@@ -262,7 +273,7 @@ export function Dashboard({ clients, financials, onOpenClient }) {
               <div className="text-sm uppercase tracking-[0.35em] text-neutral-400">Unpaid</div>
               <div className="font-mono text-3xl font-bold tracking-[0.2em] tabular-nums text-[#c4ff0e]">{formatCurrency(unpaidAmount)}</div>
             </div>
-            <div className="mt-4 rounded-2xl border border-neutral-800 bg-black/35 p-4">
+            <div className="mt-4 rounded-xl border border-neutral-800 bg-black/35 p-4">
               <ProgressBar value={burnRate} accent="warning" label={`${burnRate}% still open`} />
             </div>
             {selected && <div className="absolute bottom-4 right-4 opacity-60"><StatusGlyph /></div>}
@@ -326,24 +337,6 @@ export function Dashboard({ clients, financials, onOpenClient }) {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between gap-3 rounded-2xl border border-neutral-800 bg-[var(--card-bg)] p-3">
-        <div className="text-[10px] uppercase tracking-[0.7em] text-neutral-500">[ WIDGET BOARD ]</div>
-        <div className="flex flex-wrap items-center gap-2">
-          {widgetOrder.map((widgetId) => (
-            <button
-              key={widgetId}
-              type="button"
-              onClick={() => setSelectedWidget(widgetId)}
-              className={`rounded-xl border px-3 py-2 text-[10px] uppercase tracking-[0.45em] ${
-                selectedWidget === widgetId ? 'border-[#14b8a6] bg-[#14b8a6]/10 text-[var(--app-text)]' : 'border-neutral-800 bg-black/35 text-neutral-400'
-              }`}
-            >
-              {widgetId}
-            </button>
-          ))}
-        </div>
-      </div>
-
       <div className="grid gap-4 2xl:grid-cols-4">
         {widgetOrder
           .filter((widgetId) => widgetVisibility[widgetId] !== false)
@@ -357,22 +350,6 @@ export function Dashboard({ clients, financials, onOpenClient }) {
               {renderWidget(widgetId)}
             </div>
           ))}
-      </div>
-
-      <div className="flex flex-wrap items-center gap-2 rounded-2xl border border-neutral-800 bg-[var(--card-bg)] p-3">
-        <div className="text-[10px] uppercase tracking-[0.7em] text-neutral-500">[ TOOLS ]</div>
-        {widgetOrder.map((widgetId) => (
-          <button
-            key={`${widgetId}-toggle`}
-            type="button"
-            onClick={() => toggleWidgetVisibility(widgetId)}
-            className={`rounded-xl border px-3 py-2 text-[10px] uppercase tracking-[0.45em] ${
-              widgetVisibility[widgetId] === false ? 'border-neutral-700 bg-black/45 text-neutral-500' : 'border-neutral-800 bg-white/[0.04] text-[var(--app-text)]'
-            }`}
-          >
-            {widgetVisibility[widgetId] === false ? `add ${widgetId}` : `remove ${widgetId}`}
-          </button>
-        ))}
       </div>
     </div>
   );

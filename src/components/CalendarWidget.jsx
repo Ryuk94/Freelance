@@ -114,7 +114,7 @@ export function CalendarWidget({ clients }) {
             type="checkbox"
             checked={allDay}
             onChange={(event) => setAllDay(event.target.checked)}
-            className="h-4 w-4 accent-[#14b8a6]"
+            className="h-4 w-4 accent-[#c4ff0e]"
           />
           <span className="text-[10px] uppercase tracking-[0.45em] text-neutral-400">All day</span>
         </label>
@@ -123,7 +123,7 @@ export function CalendarWidget({ clients }) {
       <button
         type="button"
         onClick={handleAddEvent}
-        className="rounded-xl border border-neutral-700 bg-[#14b8a6]/10 px-4 py-3 text-xs font-bold uppercase tracking-[0.55em] text-[#c4ff0e] transition hover:bg-[#14b8a6]/20"
+        className="rounded-xl border border-neutral-700 bg-[#c4ff0e]/10 px-4 py-3 text-xs font-bold uppercase tracking-[0.55em] text-[#c4ff0e] transition hover:bg-[#c4ff0e]/20"
       >
         add event
       </button>

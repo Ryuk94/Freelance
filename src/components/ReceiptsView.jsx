@@ -117,7 +117,7 @@ export function ReceiptsView({ receipts }) {
               type="date"
               value={date}
               onChange={(event) => setDate(event.target.value)}
-              className="w-full rounded-xl border border-neutral-800 bg-black/45 px-3 py-3 text-xs uppercase tracking-[0.35em] text-[#c4ff0e] outline-none focus:border-teal-500"
+              className="w-full rounded-xl border border-neutral-800 bg-black/45 px-3 py-3 text-xs uppercase tracking-[0.35em] text-[#c4ff0e] outline-none focus:border-[#c4ff0e]"
             />
           </label>
           <label className="space-y-2">
@@ -129,7 +129,7 @@ export function ReceiptsView({ receipts }) {
               value={amount}
               onChange={(event) => setAmount(event.target.value)}
               placeholder="85"
-              className="w-full rounded-xl border border-neutral-800 bg-black/45 px-3 py-3 text-xs uppercase tracking-[0.35em] text-[#c4ff0e] outline-none focus:border-teal-500"
+              className="w-full rounded-xl border border-neutral-800 bg-black/45 px-3 py-3 text-xs uppercase tracking-[0.35em] text-[#c4ff0e] outline-none focus:border-[#c4ff0e]"
             />
           </label>
           <label className="space-y-2">
@@ -139,7 +139,7 @@ export function ReceiptsView({ receipts }) {
               value={vendor}
               onChange={(event) => setVendor(event.target.value)}
               placeholder="Adobe"
-              className="w-full rounded-xl border border-neutral-800 bg-black/45 px-3 py-3 text-xs uppercase tracking-[0.35em] text-[#c4ff0e] outline-none focus:border-teal-500"
+              className="w-full rounded-xl border border-neutral-800 bg-black/45 px-3 py-3 text-xs uppercase tracking-[0.35em] text-[#c4ff0e] outline-none focus:border-[#c4ff0e]"
             />
           </label>
           <label className="space-y-2">
@@ -148,7 +148,7 @@ export function ReceiptsView({ receipts }) {
               type="file"
               accept="image/*"
               onChange={(event) => setImageFile(event.target.files?.[0] ?? null)}
-              className="w-full rounded-xl border border-neutral-800 bg-black/45 px-3 py-2 text-xs uppercase tracking-[0.35em] text-neutral-400 file:mr-3 file:border-0 file:bg-gradient-to-r file:from-teal-500 file:to-blue-600 file:px-3 file:py-2 file:text-xs file:font-bold file:uppercase file:tracking-[0.35em] file:text-black"
+              className="w-full rounded-xl border border-neutral-800 bg-black/45 px-3 py-2 text-xs uppercase tracking-[0.35em] text-neutral-400 file:mr-3 file:border-0 file:bg-gradient-to-r file:from-[#c4ff0e] file:to-[#f97316] file:px-3 file:py-2 file:text-xs file:font-bold file:uppercase file:tracking-[0.35em] file:text-black"
             />
           </label>
           <label className="space-y-2 lg:col-span-2">
@@ -157,7 +157,7 @@ export function ReceiptsView({ receipts }) {
               value={notes}
               onChange={(event) => setNotes(event.target.value)}
               placeholder="Meal receipt, subscription, transport..."
-              className="min-h-28 w-full rounded-xl border border-neutral-800 bg-black/45 px-3 py-3 font-mono text-sm text-[#c4ff0e] outline-none placeholder:text-neutral-600 focus:border-teal-500"
+              className="min-h-28 w-full rounded-xl border border-neutral-800 bg-black/45 px-3 py-3 font-mono text-sm text-[#c4ff0e] outline-none placeholder:text-neutral-600 focus:border-[#c4ff0e]"
             />
           </label>
           <button

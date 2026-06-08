@@ -70,14 +70,14 @@ body {
 }
 
 :root {
-  --app-bg: #06070a;
+  --app-bg: #08090b;
   --app-text: #d7dbe3;
   --muted-text: #8d95a3;
-  --panel-bg: rgba(10, 12, 16, 0.92);
-  --card-bg: rgba(17, 19, 24, 0.84);
-  --card-hover: rgba(22, 25, 31, 0.98);
-  --surface-bg: rgba(14, 16, 20, 0.9);
-  --card-shadow: 0 24px 60px rgba(0, 0, 0, 0.32);
+  --panel-bg: rgba(10, 12, 16, 0.94);
+  --card-bg: rgba(14, 16, 20, 0.86);
+  --card-hover: rgba(18, 20, 26, 0.98);
+  --surface-bg: rgba(12, 14, 18, 0.92);
+  --card-shadow: 0 20px 42px rgba(0, 0, 0, 0.28);
   --color-scheme: dark;
 }
 
@@ -86,12 +86,12 @@ body {
   --app-text: #d7dbe3;
   --muted-text: #9aa2b1;
   --panel-bg: rgba(12, 14, 18, 0.96);
-  --card-bg: rgba(19, 22, 28, 0.94);
-  --card-hover: rgba(26, 30, 38, 1);
-  --surface-bg: rgba(15, 18, 24, 0.98);
+  --card-bg: rgba(18, 21, 26, 0.94);
+  --card-hover: rgba(24, 28, 36, 1);
+  --surface-bg: rgba(14, 17, 23, 0.98);
   --card-shadow: 0 22px 50px rgba(0, 0, 0, 0.35);
   --boring-primary: #8b5cf6;
-  --boring-secondary: #14b8a6;
+  --boring-secondary: #f97316;
   --boring-accent: #60a5fa;
 }
 
@@ -122,7 +122,7 @@ body {
 }
 
 :root[data-theme='boringos'] .bg-neon-green {
-  background: linear-gradient(135deg, rgba(20, 184, 166, 0.95), rgba(37, 99, 235, 0.95));
+  background: linear-gradient(135deg, rgba(196, 255, 14, 0.95), rgba(249, 115, 22, 0.95));
 }
 
 :root[data-theme='boringos'] .text-neon-red {
@@ -134,7 +134,7 @@ body {
 }
 
 :root[data-theme='boringos'] .hover\:bg-neon-green\/90:hover {
-  background: linear-gradient(135deg, rgba(20, 184, 166, 0.9), rgba(37, 99, 235, 0.9));
+  background: linear-gradient(135deg, rgba(196, 255, 14, 0.9), rgba(249, 115, 22, 0.9));
 }
 
 :root[data-theme='boringos'] .hover\:bg-neon-red\/90:hover {
@@ -164,11 +164,11 @@ body {
 :root[data-theme='boringos'] .rounded-3xl,
 :root[data-theme='boringos'] .rounded-\[2rem\],
 :root[data-theme='boringos'] .rounded-2xl {
-  border-radius: 1.6rem;
+  border-radius: 0.8rem;
 }
 
 :root[data-theme='boringos'] .rounded-xl {
-  border-radius: 0.875rem;
+  border-radius: 0.625rem;
 }
 
 :root[data-theme='boringos'] .border-white\/10,
@@ -233,8 +233,101 @@ body {
   border-color: rgba(148, 163, 184, 0.16);
 }
 
+:root[data-theme='neonos'] .rounded-3xl,
+:root[data-theme='neonos'] .rounded-\[2rem\],
+:root[data-theme='neonos'] .rounded-2xl {
+  border-radius: 0.85rem;
+}
+
+:root[data-theme='neonos'] .rounded-xl {
+  border-radius: 0.55rem;
+}
+
+:root[data-theme='neonos'] .bg-\[var\(--panel-bg\)\],
+:root[data-theme='neonos'] .bg-\[var\(--card-bg\)\],
+:root[data-theme='neonos'] .bg-\[var\(--surface-bg\)\] {
+  background-color: rgba(16, 18, 22, 0.94);
+}
+
+:root[data-theme='neonos'] .border-neutral-800,
+:root[data-theme='neonos'] .border-neutral-700,
+:root[data-theme='neonos'] .border-neutral-700\/50 {
+  border-color: rgba(148, 163, 184, 0.14);
+}
+
 :root[data-theme='boringos'] .text-\[\#c4ff0e\] {
   color: #c4ff0e;
+}
+
+.command-pill {
+  min-width: 5rem;
+  border-radius: 9999px;
+  border: 1px solid rgba(196, 255, 14, 0.28);
+  background: rgba(10, 12, 16, 0.92);
+  color: #f7ffe0;
+  font-size: 0.625rem;
+  font-weight: 900;
+  letter-spacing: 0.38em;
+  line-height: 1;
+  padding: 0.8rem 1rem;
+  text-transform: uppercase;
+  box-shadow: 0 16px 30px rgba(0, 0, 0, 0.38);
+}
+
+.command-orb {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 9999px;
+  border: 1px solid rgba(196, 255, 14, 0.18);
+  background: rgba(196, 255, 14, 0.06);
+  opacity: 0;
+  transform: scale(0.2);
+}
+
+.command-orb-open {
+  animation: commandPulse 420ms ease-out forwards;
+}
+
+.command-node {
+  position: absolute;
+  left: 1.75rem;
+  bottom: 1.75rem;
+  opacity: 0;
+  transform: translate3d(0, 0, 0) scale(0.2);
+  animation: commandFan 420ms cubic-bezier(0.2, 0.85, 0.2, 1) forwards;
+}
+
+.command-node-a { transform: translate3d(7rem, 0rem, 0) scale(0.9); animation-delay: 20ms; }
+.command-node-b { transform: translate3d(5rem, -4.8rem, 0) scale(0.9); animation-delay: 40ms; }
+.command-node-c { transform: translate3d(0rem, -7rem, 0) scale(0.9); animation-delay: 60ms; }
+.command-node-d { transform: translate3d(-5rem, -4.8rem, 0) scale(0.9); animation-delay: 80ms; }
+.command-node-e { transform: translate3d(-7rem, 0rem, 0) scale(0.9); animation-delay: 100ms; }
+.command-node-f { transform: translate3d(-5rem, 4.8rem, 0) scale(0.9); animation-delay: 120ms; }
+.command-node-g { transform: translate3d(0rem, 7rem, 0) scale(0.9); animation-delay: 140ms; }
+.command-node-h { transform: translate3d(5rem, 4.8rem, 0) scale(0.9); animation-delay: 160ms; }
+
+@keyframes commandPulse {
+  from {
+    opacity: 0;
+    transform: scale(0.2);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes commandFan {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 0, 0) scale(0.2);
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 button,
