@@ -132,11 +132,11 @@ export function useCloudSync() {
 
     try {
       for (const table of TABLES) {
-        await pullTable(table);
+        await pushTable(table);
       }
 
       for (const table of TABLES) {
-        await pushTable(table);
+        await pullTable(table);
       }
 
       const syncedAt = Date.now();
