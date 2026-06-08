@@ -14,6 +14,7 @@ function createDefaultGamification() {
   return {
     ...DEFAULT_GAMIFICATION,
     updatedAt: Date.now(),
+    isDeleted: false,
   };
 }
 
@@ -40,7 +41,7 @@ function fireConfetti() {
 }
 
 export function useGamification() {
-  const gamificationRows = useLiveQuery(() => db.gamification.toArray(), []);
+  const gamificationRows = useLiveQuery(() => db.gamification.filter((row) => !row.isDeleted).toArray(), []);
   const gamification = gamificationRows?.[0] ?? null;
 
   useEffect(() => {
@@ -66,6 +67,7 @@ export function useGamification() {
       currentXp: nextXp,
       dailyStreak: current.dailyStreak ?? 0,
       updatedAt: Date.now(),
+      isDeleted: false,
     });
 
     fireConfetti();

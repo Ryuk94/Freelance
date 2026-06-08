@@ -4,6 +4,7 @@ import { VitePWA } from 'vite-plugin-pwa';
 
 const repoName = process.env.GITHUB_PAGES_REPO || 'Freelance';
 const isGithubPages = process.env.GITHUB_PAGES === 'true';
+const basePath = isGithubPages ? `/${repoName}/` : '/';
 
 export default defineConfig({
   base: isGithubPages ? `/${repoName}/` : './',
@@ -35,18 +36,18 @@ export default defineConfig({
         start_url: isGithubPages ? `/${repoName}/` : '/',
         icons: [
           {
-            src: '/icon-192.png',
+            src: `${basePath}icon-192.png`,
             sizes: '192x192',
             type: 'image/png'
           },
           {
-            src: '/icon-512.png',
+            src: `${basePath}icon-512.png`,
             sizes: '512x512',
             type: 'image/png',
             purpose: 'maskable'
           },
           {
-            src: '/pwa.svg',
+            src: `${basePath}pwa.svg`,
             sizes: 'any',
             type: 'image/svg+xml'
           }

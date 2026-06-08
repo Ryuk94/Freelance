@@ -12,7 +12,11 @@ function normalizeQuickLink(url) {
 }
 
 export function ClientVault({ client }) {
-  const currentClient = useLiveQuery(() => (client?.id ? db.clients.get(client.id) : Promise.resolve(client)), [client?.id]) ?? client;
+  const currentClient =
+    useLiveQuery(
+      () => (client?.id ? db.clients.get(client.id).then((row) => (row?.isDeleted ? null : row)) : Promise.resolve(client)),
+      [client?.id],
+    ) ?? client;
 
   if (!currentClient) {
     return (

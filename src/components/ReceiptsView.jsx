@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { db } from '../db';
+import { useToast } from '../hooks/useToast';
 
 function formatCurrency(amount) {
   return new Intl.NumberFormat('en-GB', {
@@ -19,6 +20,7 @@ function fileToBase64(file) {
 }
 
 export function ReceiptsView({ receipts }) {
+  const showToast = useToast();
   const [date, setDate] = useState(() => new Date().toISOString().slice(0, 10));
   const [amount, setAmount] = useState('');
   const [vendor, setVendor] = useState('');
@@ -73,9 +75,16 @@ export function ReceiptsView({ receipts }) {
 
   const handleDelete = async (receiptId) => {
     try {
+      const now = Date.now();
       await db.receipts.update(receiptId, {
-        deletedAt: Date.now(),
-        updatedAt: Date.now(),
+        isDeleted: true,
+        updatedAt: now,
+      });
+      showToast('RECEIPT ARCHIVED', async () => {
+        await db.receipts.update(receiptId, {
+          isDeleted: false,
+          updatedAt: Date.now(),
+        });
       });
     } catch (error) {
       console.error('[FreelanceOS] Failed to delete receipt', error);

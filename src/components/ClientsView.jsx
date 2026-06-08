@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { db } from '../db';
+import { useToast } from '../hooks/useToast';
 import { QuickLinks } from './QuickLinks';
 import { Scratchpad } from './Scratchpad';
 import { GlyphMark } from './ui/GlyphMark';
@@ -217,6 +218,7 @@ function BrandKitGallery({ client }) {
 export function ClientsView({ clients, selectedClientId, onSelectClient }) {
   const groupedClients = useMemo(() => groupClients(clients), [clients]);
   const [showArchived, setShowArchived] = useState(false);
+  const showToast = useToast();
 
   const selectedClient =
     clients.find((client) => client.id === selectedClientId) ??
@@ -247,8 +249,14 @@ export function ClientsView({ clients, selectedClientId, onSelectClient }) {
 
     try {
       await db.clients.update(selectedClient.id, {
-        deletedAt: Date.now(),
+        isDeleted: true,
         updatedAt: Date.now(),
+      });
+      showToast('CLIENT ARCHIVED', async () => {
+        await db.clients.update(selectedClient.id, {
+          isDeleted: false,
+          updatedAt: Date.now(),
+        });
       });
     } catch (error) {
       console.error('[FreelanceOS] Failed to delete client', error);
@@ -295,7 +303,7 @@ export function ClientsView({ clients, selectedClientId, onSelectClient }) {
         <header className="flex flex-wrap items-start justify-between gap-4 bg-black/35 p-4">
           <div>
             <div className="text-[10px] uppercase tracking-[0.7em] text-neutral-500">[ CLIENT VAULT ]</div>
-            <h1 className="mt-2 font-serif text-4xl uppercase tracking-[0.08em] text-neon-green">{selectedClient.name}</h1>
+            <h1 className="font-display mt-2 text-4xl uppercase tracking-[0.08em] text-neon-green">{selectedClient.name}</h1>
             <p className="mt-2 text-[11px] uppercase tracking-[0.3em] text-neutral-500">status: {normalizedStatus}</p>
           </div>
 

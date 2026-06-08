@@ -7,7 +7,9 @@ function toOptionId(value) {
 }
 
 export function QuickAddModal({ open, onClose }) {
-  const activeClients = useLiveQuery(() => db.clients.where('status').equals('active').sortBy('name'), []) ?? [];
+  const activeClients =
+    useLiveQuery(() => db.clients.where('status').equals('active').filter((client) => !client.isDeleted).sortBy('name'), []) ??
+    [];
   const [mode, setMode] = useState('lead');
   const [clientName, setClientName] = useState('');
   const [clientStatus, setClientStatus] = useState('active');
@@ -123,6 +125,7 @@ export function QuickAddModal({ open, onClose }) {
         xpRewarded: 20,
         createdAt: now,
         updatedAt: now,
+        isDeleted: false,
       });
       setLeadCompanyName('');
       onClose();
@@ -150,7 +153,7 @@ export function QuickAddModal({ open, onClose }) {
         brandKits: [],
         createdAt: now,
         updatedAt: now,
-        deletedAt: 0,
+        isDeleted: false,
       });
       setClientName('');
       setClientStatus('active');
@@ -180,6 +183,7 @@ export function QuickAddModal({ open, onClose }) {
         status: 'sent',
         date: now,
         updatedAt: now,
+        isDeleted: false,
       });
       setInvoiceAmount('');
       onClose();
@@ -207,7 +211,7 @@ export function QuickAddModal({ open, onClose }) {
         <div className="flex items-start justify-between gap-4 border-b border-neutral-800 px-5 py-5">
           <div>
             <div className="text-[10px] uppercase tracking-[0.7em] text-neutral-500">[ QUICK ADD ]</div>
-            <h2 id="quick-add-title" className="mt-2 font-serif text-4xl uppercase tracking-[0.08em] text-neon-green">
+            <h2 id="quick-add-title" className="font-serif mt-2 text-4xl uppercase tracking-[0.08em] text-neon-green">
               Capture
             </h2>
             <p className="mt-2 text-[11px] uppercase tracking-[0.3em] text-neutral-500">fast entry for leads and invoices</p>

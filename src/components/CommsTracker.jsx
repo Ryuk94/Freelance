@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../db';
 import { GlyphMark } from './ui/GlyphMark';
@@ -7,12 +7,11 @@ const DEFAULT_PLATFORMS = ['Upwork', 'LinkedIn'];
 const DAY_MS = 24 * 60 * 60 * 1000;
 
 function buildDefaultRows() {
-  const now = Date.now();
   return DEFAULT_PLATFORMS.map((platform, index) => ({
     id: index + 1,
     platform,
     lastChecked: 0,
-    updatedAt: now,
+    updatedAt: Date.now() + index,
   }));
 }
 
@@ -60,30 +59,21 @@ function CommsCard({ row, onLogCheck }) {
 }
 
 export function CommsTracker() {
-  const rows = useLiveQuery(() => db.commsTracker.toArray(), []);
-  const seededRef = useRef(false);
-
-  useEffect(() => {
-    if (seededRef.current || rows === undefined || rows.length > 0) {
-      return;
-    }
-
-    seededRef.current = true;
-    void db.commsTracker.bulkAdd(buildDefaultRows());
-  }, [rows]);
+  const rows = useLiveQuery(() => db.commsTracker.filter((row) => !row.isDeleted).toArray(), []);
 
   const handleLogCheck = async (id) => {
     try {
       await db.commsTracker.update(id, {
         lastChecked: Date.now(),
         updatedAt: Date.now(),
+        isDeleted: false,
       });
     } catch (error) {
       console.error('[FreelanceOS] Failed to log comms check', error);
     }
   };
 
-  const activeRows = rows?.length ? rows : buildDefaultRows();
+  const activeRows = rows ?? [];
 
   return (
     <section className="bg-white/[0.03] p-5">
@@ -94,11 +84,17 @@ export function CommsTracker() {
         </div>
       </div>
 
-      <div className="grid gap-3 lg:grid-cols-2">
-        {activeRows.map((row) => (
-          <CommsCard key={row.id} row={row} onLogCheck={handleLogCheck} />
-        ))}
-      </div>
+      {activeRows.length > 0 ? (
+        <div className="grid gap-3 lg:grid-cols-2">
+          {activeRows.map((row) => (
+            <CommsCard key={row.id} row={row} onLogCheck={handleLogCheck} />
+          ))}
+        </div>
+      ) : (
+        <div className="bg-black/40 px-4 py-4 text-[10px] uppercase tracking-[0.45em] text-neutral-500">
+          no comms checks logged yet
+        </div>
+      )}
     </section>
   );
 }

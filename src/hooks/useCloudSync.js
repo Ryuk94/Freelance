@@ -33,7 +33,13 @@ function withUpdatedAt(row, fallbackTimestamp = Date.now()) {
 }
 
 function isDeleted(row) {
-  return toTimestamp(row?.deletedAt) > 0;
+  return Boolean(row?.isDeleted) || toTimestamp(row?.deletedAt) > 0;
+}
+
+function isNewer(remoteRow, localRow) {
+  const remoteTimestamp = toTimestamp(remoteRow?.updatedAt) || 0;
+  const localTimestamp = toTimestamp(localRow?.updatedAt) || 0;
+  return remoteTimestamp >= localTimestamp;
 }
 
 export function useCloudSync() {
@@ -67,20 +73,29 @@ export function useCloudSync() {
 
     for (const remoteRow of remoteRows) {
       const localRow = localById.get(remoteRow.id);
-      const remoteTimestamp = toTimestamp(remoteRow.updatedAt);
-      const localTimestamp = toTimestamp(localRow?.updatedAt);
       const remoteDeleted = isDeleted(remoteRow);
-      const localDeleted = isDeleted(localRow);
 
       if (remoteDeleted) {
-        if (localRow && (!localDeleted || remoteTimestamp > localTimestamp)) {
+        if (localRow && isNewer(remoteRow, localRow)) {
           await db[table].delete(remoteRow.id);
         }
         continue;
       }
 
-      if (!localRow || localDeleted || remoteTimestamp > localTimestamp) {
-        rowsToPut.push(withUpdatedAt(remoteRow, remoteTimestamp || Date.now()));
+      if (!localRow) {
+        rowsToPut.push(withUpdatedAt(remoteRow, Date.now()));
+        continue;
+      }
+
+      if (isDeleted(localRow)) {
+        if (isNewer(remoteRow, localRow)) {
+          rowsToPut.push(withUpdatedAt(remoteRow, Date.now()));
+        }
+        continue;
+      }
+
+      if (isNewer(remoteRow, localRow)) {
+        rowsToPut.push(withUpdatedAt(remoteRow, Date.now()));
       }
     }
 
@@ -99,7 +114,11 @@ export function useCloudSync() {
     const liveRows = localRows.filter((row) => !isDeleted(row));
 
     if (liveRows.length > 0) {
-      const payload = liveRows.map((row) => withUpdatedAt(row));
+      const payload = liveRows.map((row) => ({
+        ...withUpdatedAt(row),
+        isDeleted: false,
+        deletedAt: undefined,
+      }));
       const { error } = await supabase.from(table).upsert(payload, { onConflict: 'id' });
       if (error) {
         throw error;
@@ -107,7 +126,14 @@ export function useCloudSync() {
     }
 
     for (const row of deletedRows) {
-      const { error } = await supabase.from(table).delete().eq('id', row.id);
+      const { error } = await supabase.from(table).upsert(
+        {
+          ...withUpdatedAt(row),
+          isDeleted: true,
+          deletedAt: Date.now(),
+        },
+        { onConflict: 'id' },
+      );
       if (error) {
         throw error;
       }
@@ -132,11 +158,11 @@ export function useCloudSync() {
 
     try {
       for (const table of TABLES) {
-        await pushTable(table);
+        await pullTable(table);
       }
 
       for (const table of TABLES) {
-        await pullTable(table);
+        await pushTable(table);
       }
 
       const syncedAt = Date.now();

@@ -6,7 +6,7 @@ import { GlyphMark } from './ui/GlyphMark';
 
 export function HuntCard() {
   const leads = useLiveQuery(
-    () => db.leads.where('status').equals('hunting').and((lead) => !lead.deletedAt).sortBy('createdAt'),
+    () => db.leads.where('status').equals('hunting').filter((lead) => !lead.isDeleted).sortBy('createdAt'),
     [],
   );
   const { addXp } = useGamification();
@@ -14,7 +14,7 @@ export function HuntCard() {
   const timersRef = useRef(new Map());
 
   const huntQueue = useMemo(
-    () => (leads ?? []).filter((lead) => lead.status === 'hunting' && !lead.deletedAt).slice(0, 3),
+    () => (leads ?? []).filter((lead) => lead.status === 'hunting' && !lead.isDeleted).slice(0, 3),
     [leads],
   );
 
@@ -38,7 +38,7 @@ export function HuntCard() {
 
     const timerId = window.setTimeout(async () => {
       timersRef.current.delete(lead.id);
-      await db.leads.update(lead.id, { status: 'followed_up', updatedAt: Date.now() });
+      await db.leads.update(lead.id, { status: 'followed_up', updatedAt: Date.now(), isDeleted: false });
       await addXp(20);
       setCheckedIds((current) => current.filter((id) => id !== lead.id));
     }, 500);

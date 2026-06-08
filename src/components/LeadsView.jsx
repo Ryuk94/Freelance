@@ -1,12 +1,22 @@
 import React from 'react';
 import { db } from '../db';
+import { useToast } from '../hooks/useToast';
 
 export function LeadsView({ leads }) {
+  const showToast = useToast();
+
   const handleDelete = async (leadId) => {
     try {
+      const now = Date.now();
       await db.leads.update(leadId, {
-        deletedAt: Date.now(),
-        updatedAt: Date.now(),
+        isDeleted: true,
+        updatedAt: now,
+      });
+      showToast('LEAD ARCHIVED', async () => {
+        await db.leads.update(leadId, {
+          isDeleted: false,
+          updatedAt: Date.now(),
+        });
       });
     } catch (error) {
       console.error('[FreelanceOS] Failed to delete lead', error);

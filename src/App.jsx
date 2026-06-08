@@ -8,6 +8,7 @@ import { LeadsView } from './components/LeadsView';
 import { FinancialsView } from './components/FinancialsView';
 import { ReceiptsView } from './components/ReceiptsView';
 import { QuickAddModal } from './components/QuickAddModal';
+import { ToastProvider } from './components/ToastContext';
 import { useCloudSync } from './hooks/useCloudSync';
 
 const NAV_ITEMS = ['dashboard', 'clients', 'leads', 'receipts', 'financials'];
@@ -15,6 +16,7 @@ const THEME_STORAGE_KEY = 'freelanceos.theme';
 const MODE_STORAGE_KEY = 'freelanceos.mode';
 const NOTIFICATION_STORAGE_KEY = 'freelanceos.notificationsEnabled';
 const NOTIFIED_ITEMS_STORAGE_KEY = 'freelanceos.notifiedItems';
+const APP_BASE_URL = import.meta.env.BASE_URL || '/';
 
 function getStoredSetting(key, fallback) {
   if (typeof window === 'undefined') {
@@ -210,14 +212,14 @@ function useReminderNotifications({ leads, financials }) {
       if (registration?.showNotification) {
         await registration.showNotification(title, {
           body,
-          icon: '/pwa.svg',
-          badge: '/pwa.svg',
+          icon: `${APP_BASE_URL}pwa.svg`,
+          badge: `${APP_BASE_URL}pwa.svg`,
           tag: `freelanceos-${title}`,
         });
       } else {
         new Notification(title, {
           body,
-          icon: '/pwa.svg',
+          icon: `${APP_BASE_URL}pwa.svg`,
           tag: `freelanceos-${title}`,
         });
       }
@@ -234,12 +236,12 @@ function useReminderNotifications({ leads, financials }) {
       return;
     }
 
-    const overdueLead = (leads ?? []).find((lead) => lead.status === 'hunting' && !lead.deletedAt && !notifiedItemsRef.has(`lead-${lead.id}`));
+    const overdueLead = (leads ?? []).find((lead) => lead.status === 'hunting' && !lead.isDeleted && !notifiedItemsRef.has(`lead-${lead.id}`));
     const overdueInvoice = (financials ?? []).find(
       (entry) =>
         entry.type === 'invoice' &&
         entry.status !== 'paid' &&
-        !entry.deletedAt &&
+        !entry.isDeleted &&
         !notifiedItemsRef.has(`invoice-${entry.id}`),
     );
 
@@ -248,7 +250,7 @@ function useReminderNotifications({ leads, financials }) {
     }
 
     const timerId = window.setInterval(async () => {
-      const nextLead = (leads ?? []).find((lead) => lead.status === 'hunting' && !lead.deletedAt && !notifiedItemsRef.has(`lead-${lead.id}`));
+      const nextLead = (leads ?? []).find((lead) => lead.status === 'hunting' && !lead.isDeleted && !notifiedItemsRef.has(`lead-${lead.id}`));
       if (nextLead) {
         notifiedItemsRef.add(`lead-${nextLead.id}`);
         await notify('Follow-up reminder', `${nextLead.companyName} is still waiting for a follow-up.`);
@@ -258,7 +260,7 @@ function useReminderNotifications({ leads, financials }) {
         (entry) =>
           entry.type === 'invoice' &&
           entry.status !== 'paid' &&
-          !entry.deletedAt &&
+          !entry.isDeleted &&
           !notifiedItemsRef.has(`invoice-${entry.id}`),
       );
       if (nextInvoice) {
@@ -280,10 +282,10 @@ function useReminderNotifications({ leads, financials }) {
 }
 
 export function App() {
-  const leads = useLiveQuery(() => db.leads.toArray(), []);
-  const clients = useLiveQuery(() => db.clients.toArray(), []);
-  const financials = useLiveQuery(() => db.financials.toArray(), []);
-  const receipts = useLiveQuery(() => db.receipts.orderBy('date').reverse().toArray(), []);
+  const leads = useLiveQuery(() => db.leads.filter((lead) => !lead.isDeleted).toArray(), []);
+  const clients = useLiveQuery(() => db.clients.filter((client) => !client.isDeleted).toArray(), []);
+  const financials = useLiveQuery(() => db.financials.filter((entry) => !entry.isDeleted).toArray(), []);
+  const receipts = useLiveQuery(() => db.receipts.filter((receipt) => !receipt.isDeleted).toArray(), []);
   const { status: syncStatus, lastSynced, forceSync } = useCloudSync();
 
   const [activeView, setActiveView] = useState('dashboard');
@@ -307,11 +309,6 @@ export function App() {
     });
   };
 
-  const visibleLeads = (leads ?? []).filter((lead) => !lead.deletedAt);
-  const visibleClients = (clients ?? []).filter((client) => !client.deletedAt);
-  const visibleFinancials = (financials ?? []).filter((entry) => !entry.deletedAt);
-  const visibleReceipts = (receipts ?? []).filter((receipt) => !receipt.deletedAt);
-
   useEffect(() => {
     window.localStorage.setItem(THEME_STORAGE_KEY, theme);
   }, [theme]);
@@ -330,9 +327,9 @@ export function App() {
       return;
     }
 
-    const firstClient = visibleClients.find((client) => client.status === 'active') ?? visibleClients[0];
+    const firstClient = (clients ?? []).find((client) => client.status === 'active') ?? (clients ?? [])[0];
     setSelectedClientId(firstClient?.id ?? null);
-  }, [activeView, selectedClientId, visibleClients]);
+  }, [activeView, clients, selectedClientId]);
 
   const handleOpenClient = (clientId) => {
     setSelectedClientId(clientId);
@@ -341,43 +338,45 @@ export function App() {
 
   return (
     <>
-      <AppLayout
-        activeView={activeView}
-        onViewChange={setActiveView}
-        navItems={NAV_ITEMS}
-        syncStatus={syncStatus}
-        lastSynced={lastSynced}
-        onForceSync={forceSync}
-        onQuickAddOpen={() => setQuickAddOpen(true)}
-        theme={theme}
-        mode={mode}
-        onThemeChange={setTheme}
-        onModeChange={setMode}
-        onResetLocalData={resetLocalData}
-        canInstallApp={installPrompt.canInstall}
-        isAppInstalled={installPrompt.isInstalled}
-        onInstallApp={installPrompt.promptInstall}
-        updateAvailable={swUpdate.updateAvailable}
-        onRefreshApp={() => window.dispatchEvent(new Event('app-update-refresh'))}
-        onDismissUpdate={swUpdate.dismissUpdate}
-        notificationsEnabled={notifications.enabled}
-        notificationsPermission={notifications.permission}
-        onEnableNotifications={notifications.requestPermission}
-        onTestNotification={() => notifications.notify('FreelanceOS test', 'Notifications are working on this device.')}
-        onToggleNotifications={() => notifications.setEnabled((current) => !current)}
-      >
-        {activeView === 'dashboard' && (
-          <Dashboard clients={visibleClients} financials={visibleFinancials} onOpenClient={handleOpenClient} />
-        )}
-        {activeView === 'clients' && (
-          <ClientsView clients={visibleClients} selectedClientId={selectedClientId} onSelectClient={setSelectedClientId} />
-        )}
-        {activeView === 'leads' && <LeadsView leads={visibleLeads} />}
-        {activeView === 'receipts' && <ReceiptsView receipts={visibleReceipts} />}
-        {activeView === 'financials' && <FinancialsView financials={visibleFinancials} clients={visibleClients} />}
-      </AppLayout>
+      <ToastProvider>
+        <AppLayout
+          activeView={activeView}
+          onViewChange={setActiveView}
+          navItems={NAV_ITEMS}
+          syncStatus={syncStatus}
+          lastSynced={lastSynced}
+          onForceSync={forceSync}
+          onQuickAddOpen={() => setQuickAddOpen(true)}
+          theme={theme}
+          mode={mode}
+          onThemeChange={setTheme}
+          onModeChange={setMode}
+          onResetLocalData={resetLocalData}
+          canInstallApp={installPrompt.canInstall}
+          isAppInstalled={installPrompt.isInstalled}
+          onInstallApp={installPrompt.promptInstall}
+          updateAvailable={swUpdate.updateAvailable}
+          onRefreshApp={() => window.dispatchEvent(new Event('app-update-refresh'))}
+          onDismissUpdate={swUpdate.dismissUpdate}
+          notificationsEnabled={notifications.enabled}
+          notificationsPermission={notifications.permission}
+          onEnableNotifications={notifications.requestPermission}
+          onTestNotification={() => notifications.notify('FreelanceOS test', 'Notifications are working on this device.')}
+          onToggleNotifications={() => notifications.setEnabled((current) => !current)}
+        >
+          {activeView === 'dashboard' && (
+            <Dashboard clients={clients ?? []} financials={financials ?? []} onOpenClient={handleOpenClient} />
+          )}
+          {activeView === 'clients' && (
+            <ClientsView clients={clients ?? []} selectedClientId={selectedClientId} onSelectClient={setSelectedClientId} />
+          )}
+          {activeView === 'leads' && <LeadsView leads={leads ?? []} />}
+          {activeView === 'receipts' && <ReceiptsView receipts={receipts ?? []} />}
+          {activeView === 'financials' && <FinancialsView financials={financials ?? []} clients={clients ?? []} />}
+        </AppLayout>
 
-      <QuickAddModal open={quickAddOpen} onClose={() => setQuickAddOpen(false)} />
+        <QuickAddModal open={quickAddOpen} onClose={() => setQuickAddOpen(false)} />
+      </ToastProvider>
     </>
   );
 }

@@ -12,6 +12,22 @@
   font-display: swap;
 }
 
+@font-face {
+  font-family: 'Ivy Presto Headline Light';
+  src: url('/fonts/ivy-presto-headline-light.otf') format('opentype');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+.font-display {
+  font-family: 'Ivy Presto Headline Light', 'Ivy Presto Headline Thin', 'Playfair Display', serif;
+}
+
+.font-serif {
+  font-family: 'Ivy Presto Headline Thin', 'Playfair Display', serif;
+}
+
 html,
 body,
 #root {
@@ -120,6 +136,12 @@ body {
 }
 
 :root[data-theme='boringos'] .font-serif {
+  font-family: 'Inter', 'Roboto', ui-sans-serif, system-ui, sans-serif;
+  font-weight: 900;
+  letter-spacing: -0.03em;
+}
+
+:root[data-theme='boringos'] .font-display {
   font-family: 'Inter', 'Roboto', ui-sans-serif, system-ui, sans-serif;
   font-weight: 900;
   letter-spacing: -0.03em;

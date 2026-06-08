@@ -1,5 +1,6 @@
 import React from 'react';
 import { db } from '../db';
+import { useToast } from '../hooks/useToast';
 
 function formatCurrency(amount) {
   return new Intl.NumberFormat('en-GB', {
@@ -10,11 +11,20 @@ function formatCurrency(amount) {
 }
 
 export function FinancialsView({ financials, clients }) {
+  const showToast = useToast();
+
   const handleDelete = async (entryId) => {
     try {
+      const now = Date.now();
       await db.financials.update(entryId, {
-        deletedAt: Date.now(),
-        updatedAt: Date.now(),
+        isDeleted: true,
+        updatedAt: now,
+      });
+      showToast('ENTRY ARCHIVED', async () => {
+        await db.financials.update(entryId, {
+          isDeleted: false,
+          updatedAt: Date.now(),
+        });
       });
     } catch (error) {
       console.error('[FreelanceOS] Failed to delete financial entry', error);

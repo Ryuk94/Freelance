@@ -68,6 +68,28 @@ db.version(6)
     commsTracker: '++id, platform, lastChecked, updatedAt'
   });
 
+db.version(7)
+  .stores({
+    leads: '++id, companyName, status, xpRewarded, createdAt, updatedAt, isDeleted',
+    clients: '++id, name, status, quickLinks, notes, brandKits, createdAt, updatedAt, isDeleted',
+    financials: '++id, clientId, type, amount, status, date, updatedAt, isDeleted',
+    gamification: '++id, currentLevel, currentXp, dailyStreak, updatedAt, isDeleted',
+    receipts: '++id, date, amount, vendor, notes, imageBase64, updatedAt, isDeleted',
+    commsTracker: '++id, platform, lastChecked, updatedAt, isDeleted'
+  })
+  .upgrade(async (tx) => {
+    const tableNames = ['leads', 'clients', 'financials', 'gamification', 'receipts', 'commsTracker'];
+
+    for (const tableName of tableNames) {
+      await tx.table(tableName).toCollection().modify((row) => {
+        if (row.isDeleted === undefined) {
+          row.isDeleted = Boolean(row.deletedAt);
+        }
+        delete row.deletedAt;
+      });
+    }
+  });
+
 export const LEAD_STATUSES = ['hunting', 'pitched', 'followed_up', 'interview'];
 export const CLIENT_STATUSES = ['active', 'archived'];
 export const FINANCIAL_TYPES = ['invoice', 'goal'];
