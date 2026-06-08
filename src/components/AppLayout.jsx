@@ -286,34 +286,34 @@ export function AppLayout({
         </aside>
 
         <div className="min-w-0 flex-1">
-          <header className="mb-4 flex items-center justify-between gap-3 rounded-3xl bg-[var(--card-bg)] px-4 py-3 shadow-[var(--card-shadow)] lg:hidden">
-            <div className="flex min-w-0 items-center gap-3">
-              <div className="shrink-0 scale-[0.8]">
+          <header className="mb-4 rounded-3xl bg-[var(--card-bg)] px-4 py-4 shadow-[var(--card-shadow)] lg:hidden">
+            <div className="flex items-center justify-between gap-3">
+              <div className="flex min-w-0 items-center gap-3">
                 <LogoMark />
+                <div className="min-w-0">
+                  <div className="text-[9px] uppercase tracking-[0.55em] text-neutral-500">[ SYSTEM ]</div>
+                  <h1 className="mt-1 truncate font-serif text-[2rem] font-black leading-[0.95] tracking-[0.02em] text-neon-green sm:text-[2.35rem]">
+                    FreelanceOS
+                  </h1>
+                </div>
               </div>
-              <div className="min-w-0">
-                <div className="text-[9px] uppercase tracking-[0.45em] text-neutral-500">[ FREELANCE OS ]</div>
-                <h1 className="mt-1 truncate font-serif text-[1.45rem] font-black leading-[0.95] tracking-[0.02em] text-neon-green sm:text-[1.7rem]">
-                  FreelanceOS
-                </h1>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setSettingsOpen(true)}
+                  className="flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-black/85 text-sm font-bold text-white shadow-lg"
+                  title="Settings"
+                >
+                  ⚙
+                </button>
+                <button
+                  type="button"
+                  onClick={onQuickAddOpen}
+                  className="bg-neon-green px-3 py-2 text-[10px] font-bold uppercase tracking-[0.5em] text-black"
+                >
+                  + add
+                </button>
               </div>
-            </div>
-            <div className="flex items-center gap-2">
-              <button
-                type="button"
-                onClick={() => setSettingsOpen(true)}
-                className="flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-black/85 text-sm font-bold text-white shadow-lg"
-                title="Settings"
-              >
-                ⚙
-              </button>
-              <button
-                type="button"
-                onClick={onQuickAddOpen}
-                className="bg-neon-green px-3 py-2 text-[10px] font-bold uppercase tracking-[0.5em] text-black"
-              >
-                + add
-              </button>
             </div>
           </header>
 
@@ -515,3 +515,4 @@ function SyncIndicator({ status, lastSynced, onForceSync }) {
     </button>
   );
 }
+

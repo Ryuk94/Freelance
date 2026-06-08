@@ -159,16 +159,7 @@ function DashboardWidgetShell({ title, eyebrow, children, className = '', dragga
         : '';
 
   return (
-    <section className={`relative ${dragClasses} ${className}`}>
-      {draggable ? (
-        <button
-          type="button"
-          {...dragHandleProps}
-          className="absolute right-3 top-3 z-10 border border-black/20 bg-white/60 px-2 py-1 text-[9px] font-bold uppercase tracking-[0.45em] text-black/70 backdrop-blur"
-        >
-          drag
-        </button>
-      ) : null}
+    <section className={`relative ${dragClasses} ${className}`} {...dragHandleProps}>
       {children}
     </section>
   );
@@ -244,7 +235,7 @@ export function Dashboard({ clients, financials, onOpenClient }) {
     switch (widgetId) {
       case 'welcome':
         return (
-          <DashboardWidgetShell key="welcome" className="2xl:col-span-4" draggable dragHandleProps={{ onMouseDown: () => {} }}>
+          <DashboardWidgetShell key="welcome" className="2xl:col-span-4" draggable dragHandleProps={{ draggable: true, onDragStart: handleDragStart('welcome'), onDragEnd: handleDragEnd, onDragOver: (event) => event.preventDefault(), onDrop: handleDropOn('welcome') }}>
             <section className="relative overflow-hidden border border-white/10 bg-white/[0.04] p-5">
               <div className="text-[10px] uppercase tracking-[0.7em] text-neutral-500">[ TODAY ]</div>
               <h2 className="mt-2 font-serif text-3xl font-black uppercase tracking-[0.06em] text-neon-green">{todayLabel}</h2>
@@ -413,6 +404,9 @@ export function Dashboard({ clients, financials, onOpenClient }) {
           return (
             <div
               key={widgetId}
+              draggable
+              onDragStart={handleDragStart(widgetId)}
+              onDragEnd={handleDragEnd}
               onDragOver={(event) => {
                 event.preventDefault();
                 setDragOverWidget(widgetId);

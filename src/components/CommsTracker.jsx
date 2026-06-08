@@ -38,7 +38,7 @@ function CommsCard({ row, onLogCheck }) {
   const statusText = stale ? 'check overdue' : 'checked within 24h';
 
   return (
-    <div className="relative overflow-hidden border border-black/40 bg-transparent px-4 py-4 text-black">
+    <div className="relative overflow-hidden bg-neon-red px-4 py-4 text-black">
       <CardGlyph />
       <div className="flex items-start justify-between gap-4">
         <div>
@@ -51,7 +51,7 @@ function CommsCard({ row, onLogCheck }) {
       <button
         type="button"
         onClick={() => onLogCheck(row.id)}
-        className="mt-4 border border-black bg-transparent px-4 py-3 text-xs font-bold uppercase tracking-[0.55em] text-black transition hover:bg-black/5"
+        className="mt-4 bg-black px-4 py-3 text-xs font-bold uppercase tracking-[0.55em] text-neon-green transition hover:bg-neutral-950"
       >
         log check
       </button>
