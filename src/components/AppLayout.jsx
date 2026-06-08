@@ -198,12 +198,12 @@ function CommandMenu({
   if (!open) return null;
   return (
     <div className="pointer-events-none fixed inset-0 z-50">
-      <div className="absolute bottom-6 left-6 h-72 w-72">
+      <div className="absolute bottom-6 left-6 h-[26rem] w-[26rem]">
         <div className="command-orb command-orb-open" />
         <button
           type="button"
           onClick={onClose}
-          className="absolute bottom-0 left-0 flex h-14 w-14 items-center justify-center rounded-full border border-[#c4ff0e] bg-[#c4ff0e] text-black shadow-[0_18px_38px_rgba(0,0,0,0.45)]"
+          className="pointer-events-auto absolute bottom-0 left-0 flex h-14 w-14 items-center justify-center rounded-full border border-[#c4ff0e] bg-[#c4ff0e] text-black shadow-[0_18px_38px_rgba(0,0,0,0.45)]"
           aria-label="Close commands"
         >
           <svg width="22" height="22" viewBox="0 0 22 22" fill="currentColor">
@@ -211,28 +211,28 @@ function CommandMenu({
           </svg>
         </button>
         <div className="command-node command-node-a">
-          <button type="button" onClick={() => { onAdd?.(); onClose?.(); }} className="command-pill">add</button>
+          <button type="button" onClick={() => { onAdd?.(); onClose?.(); }} className="pointer-events-auto command-pill">add</button>
         </div>
         <div className="command-node command-node-b">
-          <button type="button" onClick={() => { onLog?.(); onClose?.(); }} className="command-pill">log</button>
+          <button type="button" onClick={() => { onLog?.(); onClose?.(); }} className="pointer-events-auto command-pill">log</button>
         </div>
         <div className="command-node command-node-c">
-          <button type="button" onClick={() => onThemeChange(theme === 'light' ? 'dark' : 'light')} className="command-pill">{theme === 'light' ? 'dark' : 'light'}</button>
+          <button type="button" onClick={() => onThemeChange(theme === 'light' ? 'dark' : 'light')} className="pointer-events-auto command-pill">{theme === 'light' ? 'dark' : 'light'}</button>
         </div>
         <div className="command-node command-node-d">
-          <button type="button" onClick={() => { onOpenSettings?.(); onClose?.(); }} className="command-pill">settings</button>
+          <button type="button" onClick={() => { onOpenSettings?.(); onClose?.(); }} className="pointer-events-auto command-pill">settings</button>
         </div>
         <div className="command-node command-node-e">
-          <button type="button" onClick={() => { onReset?.(); onClose?.(); }} className="command-pill">reset</button>
+          <button type="button" onClick={() => { onReset?.(); onClose?.(); }} className="pointer-events-auto command-pill">reset</button>
         </div>
         <div className="command-node command-node-f">
-          <button type="button" onClick={() => { onToggleNotifications?.(); onClose?.(); }} className="command-pill">{notificationsEnabled ? 'nudge off' : 'nudge on'}</button>
+          <button type="button" onClick={() => { onToggleNotifications?.(); onClose?.(); }} className="pointer-events-auto command-pill">{notificationsEnabled ? 'nudge off' : 'nudge on'}</button>
         </div>
         <div className="command-node command-node-g">
-          <button type="button" onClick={() => { onTestNotification?.(); onClose?.(); }} className="command-pill">test</button>
+          <button type="button" onClick={() => { onTestNotification?.(); onClose?.(); }} className="pointer-events-auto command-pill">test</button>
         </div>
         <div className="command-node command-node-h">
-          <button type="button" onClick={() => { onInstallApp?.(); onClose?.(); }} className="command-pill">{isAppInstalled ? 'installed' : canInstallApp ? 'install' : 'not ready'}</button>
+          <button type="button" onClick={() => { onInstallApp?.(); onClose?.(); }} className="pointer-events-auto command-pill">{isAppInstalled ? 'installed' : canInstallApp ? 'install' : 'not ready'}</button>
         </div>
       </div>
     </div>
