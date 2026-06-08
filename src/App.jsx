@@ -11,7 +11,6 @@ import { QuickAddModal } from './components/QuickAddModal';
 import { useCloudSync } from './hooks/useCloudSync';
 
 const NAV_ITEMS = ['dashboard', 'clients', 'leads', 'receipts', 'financials'];
-const TEST_DATA_WIPED_KEY = 'freelanceos.testDataWiped';
 const THEME_STORAGE_KEY = 'freelanceos.theme';
 const MODE_STORAGE_KEY = 'freelanceos.mode';
 
@@ -24,35 +23,12 @@ function getStoredSetting(key, fallback) {
   return value ?? fallback;
 }
 
-function useWipeDemoDataOnce() {
-  useEffect(() => {
-    const alreadyWiped = window.localStorage.getItem(TEST_DATA_WIPED_KEY) === '1';
-    if (alreadyWiped) {
-      return;
-    }
-
-    window.localStorage.setItem(TEST_DATA_WIPED_KEY, '1');
-
-    void db.transaction('rw', db.leads, db.clients, db.financials, db.gamification, db.receipts, db.commsTracker, async () => {
-      await Promise.all([
-        db.leads.clear(),
-        db.clients.clear(),
-        db.financials.clear(),
-        db.gamification.clear(),
-        db.receipts.clear(),
-        db.commsTracker.clear(),
-      ]);
-    });
-  }, []);
-}
-
 export function App() {
   const leads = useLiveQuery(() => db.leads.toArray(), []);
   const clients = useLiveQuery(() => db.clients.toArray(), []);
   const financials = useLiveQuery(() => db.financials.toArray(), []);
   const receipts = useLiveQuery(() => db.receipts.orderBy('date').reverse().toArray(), []);
   const { status: syncStatus, lastSynced, forceSync } = useCloudSync();
-  useWipeDemoDataOnce();
 
   const [activeView, setActiveView] = useState('dashboard');
   const [selectedClientId, setSelectedClientId] = useState(null);
@@ -60,7 +36,6 @@ export function App() {
   const [theme, setTheme] = useState(() => getStoredSetting(THEME_STORAGE_KEY, 'neonos'));
   const [mode, setMode] = useState(() => getStoredSetting(MODE_STORAGE_KEY, 'dark'));
   const resetLocalData = () => {
-    window.localStorage.removeItem(TEST_DATA_WIPED_KEY);
     void db.transaction('rw', db.leads, db.clients, db.financials, db.gamification, db.receipts, db.commsTracker, async () => {
       await Promise.all([
         db.leads.clear(),
