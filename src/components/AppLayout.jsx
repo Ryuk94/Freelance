@@ -314,7 +314,7 @@ export function AppLayout({
             })}
           </nav>
 
-          <main className="rounded-[2rem] bg-[var(--surface-bg)] p-4 shadow-[var(--card-shadow)] sm:p-6">
+          <main className="rounded-[2rem] bg-[var(--surface-bg)] p-4 pb-20 shadow-[var(--card-shadow)] sm:p-6 sm:pb-20">
             {children}
           </main>
 
