@@ -1,8 +1,9 @@
 import React from 'react';
 import { useGamification } from '../hooks/useGamification';
+import { GlyphMark } from './ui/GlyphMark';
 
 function CardGlyph({ glyph = '[//]' }) {
-  return <span className="pointer-events-none absolute bottom-2 right-3 text-sm font-bold tracking-[0.2em] text-black/25">{glyph}</span>;
+  return <GlyphMark tone="dark" />;
 }
 
 export function XpLevelCard() {

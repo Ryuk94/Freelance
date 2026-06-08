@@ -2,6 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { db } from '../db';
 import { QuickLinks } from './QuickLinks';
 import { Scratchpad } from './Scratchpad';
+import { GlyphMark } from './ui/GlyphMark';
 
 function normalizeStatus(client) {
   return client?.status === 'past' ? 'archived' : client?.status ?? 'active';
@@ -15,7 +16,7 @@ function groupClients(clients) {
 }
 
 function CardGlyph({ glyph = '[//]' }) {
-  return <span className="pointer-events-none absolute bottom-2 right-3 text-sm font-bold tracking-[0.2em] text-black/20">{glyph}</span>;
+  return <GlyphMark tone="dark" />;
 }
 
 function ClientListButton({ client, active, onSelect }) {

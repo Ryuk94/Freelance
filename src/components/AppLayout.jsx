@@ -195,7 +195,7 @@ function QuoteBar() {
 
 function LogoMark() {
   return (
-    <svg width="40" height="40" viewBox="0 0 40 40" fill="currentColor" xmlns="http://www.w3.org/2000/svg" className="mb-2 text-white">
+    <svg width="40" height="40" viewBox="0 0 40 40" fill="currentColor" xmlns="http://www.w3.org/2000/svg" className="text-white">
       <rect x="4" y="4" width="12" height="32" />
       <rect x="20" y="4" width="16" height="10" />
       <rect x="20" y="18" width="10" height="8" />
@@ -242,7 +242,7 @@ export function AppLayout({
         <aside className="hidden w-[320px] shrink-0 flex-col gap-4 bg-[var(--panel-bg)] p-4 lg:flex">
           <div className="rounded-3xl bg-[var(--card-bg)] p-4 shadow-[var(--card-shadow)]">
             <LogoMark />
-            <h1 className="mt-2 max-w-[10ch] font-serif text-[2.55rem] leading-[0.92] tracking-[0.02em] text-neon-green">
+            <h1 className="mt-3 max-w-[10ch] font-serif text-[2.6rem] font-black leading-[0.9] tracking-[0.02em] text-neon-green">
               FreelanceOS
             </h1>
           </div>
@@ -286,9 +286,17 @@ export function AppLayout({
         </aside>
 
         <div className="min-w-0 flex-1">
-          <header className="mb-4 flex items-center justify-between rounded-3xl bg-[var(--card-bg)] px-4 py-3 shadow-[var(--card-shadow)] lg:hidden">
-            <div>
-              <div className="mt-1 text-xs uppercase tracking-[0.45em] text-neon-green">{LABELS[activeView] ?? activeView}</div>
+          <header className="mb-4 flex items-center justify-between gap-3 rounded-3xl bg-[var(--card-bg)] px-4 py-3 shadow-[var(--card-shadow)] lg:hidden">
+            <div className="flex min-w-0 items-center gap-3">
+              <div className="shrink-0 scale-[0.8]">
+                <LogoMark />
+              </div>
+              <div className="min-w-0">
+                <div className="text-[9px] uppercase tracking-[0.45em] text-neutral-500">[ FREELANCE OS ]</div>
+                <h1 className="mt-1 truncate font-serif text-[1.45rem] font-black leading-[0.95] tracking-[0.02em] text-neon-green sm:text-[1.7rem]">
+                  FreelanceOS
+                </h1>
+              </div>
             </div>
             <div className="flex items-center gap-2">
               <button
@@ -387,8 +395,14 @@ export function AppLayout({
                 onClick={() => onModeChange(mode === 'light' ? 'dark' : 'light')}
               />
               <SettingsButton
-                label={canInstallApp ? 'Install App' : isAppInstalled ? 'App Installed' : 'Install Not Ready'}
-                description="Add FreelanceOS to your Android home screen or desktop."
+                label={isAppInstalled ? 'App Installed' : canInstallApp ? 'Install App' : 'Install Not Ready'}
+                description={
+                  canInstallApp
+                    ? 'Open the browser install dialogue to add FreelanceOS to your device.'
+                    : isAppInstalled
+                      ? 'FreelanceOS is already installed on this device.'
+                      : 'Install becomes available once the browser exposes the app prompt.'
+                }
                 onClick={onInstallApp}
               />
               <SettingsButton

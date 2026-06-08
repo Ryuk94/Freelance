@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../db';
+import { GlyphMark } from './ui/GlyphMark';
 
 const DEFAULT_PLATFORMS = ['Upwork', 'LinkedIn'];
 const DAY_MS = 24 * 60 * 60 * 1000;
@@ -29,16 +30,15 @@ function formatLastChecked(value) {
 }
 
 function CardGlyph({ glyph = '[//]' }) {
-  return <span className="pointer-events-none absolute bottom-2 right-3 text-sm font-bold tracking-[0.2em] text-black/25">{glyph}</span>;
+  return <GlyphMark tone="dark" />;
 }
 
 function CommsCard({ row, onLogCheck }) {
   const stale = !row.lastChecked || Date.now() - row.lastChecked > DAY_MS;
-  const statusClass = stale ? 'bg-neon-red text-black' : 'bg-neon-green text-black';
   const statusText = stale ? 'check overdue' : 'checked within 24h';
 
   return (
-    <div className={`relative overflow-hidden px-4 py-4 ${statusClass}`}>
+    <div className="relative overflow-hidden border border-black/40 bg-transparent px-4 py-4 text-black">
       <CardGlyph />
       <div className="flex items-start justify-between gap-4">
         <div>
@@ -51,7 +51,7 @@ function CommsCard({ row, onLogCheck }) {
       <button
         type="button"
         onClick={() => onLogCheck(row.id)}
-        className="mt-4 bg-black px-4 py-3 text-xs font-bold uppercase tracking-[0.55em] text-neon-green transition hover:bg-neutral-950"
+        className="mt-4 border border-black bg-transparent px-4 py-3 text-xs font-bold uppercase tracking-[0.55em] text-black transition hover:bg-black/5"
       >
         log check
       </button>
