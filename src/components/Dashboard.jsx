@@ -68,7 +68,7 @@ function Panel({
       className={[
         'relative min-w-0 overflow-hidden rounded-xl border border-neutral-800 bg-neutral-900/80 p-5 shadow-[var(--card-shadow)] transition',
         'h-full',
-        selected ? '!border-[#c4ff0e] !bg-[#c4ff0e] !text-black ring-1 ring-[#c4ff0e]' : '',
+        selected ? '!border-[#c4ff0e] !bg-black !text-[#c4ff0e] ring-1 ring-[#c4ff0e]' : '',
         variant === 'hero' ? '!border-transparent !bg-transparent !p-0 !shadow-none' : '',
         span,
         className,
@@ -76,8 +76,8 @@ function Panel({
     >
       {showHeader ? (
         <div className="mb-4">
-          <div className={`text-[10px] uppercase tracking-[0.7em] ${selected ? '!text-black/60' : 'text-neutral-500'}`}>{eyebrow}</div>
-          <h2 className={`mt-2 font-serif uppercase tracking-[0.08em] ${variant === 'hero' ? 'text-[2rem] leading-[0.9]' : 'text-2xl'} ${selected ? '!text-black' : 'text-[var(--app-text)]'}`}>{title}</h2>
+          <div className={`text-[10px] uppercase tracking-[0.7em] ${selected ? 'text-[#c4ff0e]/60' : 'text-neutral-500'}`}>{eyebrow}</div>
+          <h2 className={`mt-2 font-serif uppercase tracking-[0.08em] ${variant === 'hero' ? 'text-[2rem] leading-[0.9]' : 'text-2xl'} ${selected ? 'text-[#c4ff0e]' : 'text-[var(--app-text)]'}`}>{title}</h2>
         </div>
       ) : null}
       <div className={`min-h-0 flex-1 ${showHeader ? '' : 'pt-0'}`}>
@@ -256,14 +256,23 @@ export function Dashboard({ clients, financials, onOpenClient }) {
     switch (widgetId) {
       case 'welcome':
         return (
-          <Panel key={widgetId} title={todayLabel} eyebrow={`[ ${greeting} ]`} variant="hero" showHeader={true} draggable={false} onClick={() => setSelectedWidget(widgetId)} onDoubleClick={undefined}>
-            <div className="space-y-3">
-              <p className="max-w-4xl text-sm leading-7 text-[var(--app-text)]">
+          <section
+            key={widgetId}
+            onClick={() => setSelectedWidget(widgetId)}
+            className={[
+              'relative min-w-0 rounded-xl px-2 py-1 sm:px-3 sm:py-2',
+              selected ? 'bg-black text-[#c4ff0e]' : 'text-[var(--app-text)]',
+            ].join(' ')}
+          >
+            <div className="space-y-2.5">
+              <div className={`text-[10px] uppercase tracking-[0.7em] ${selected ? 'text-[#c4ff0e]/60' : 'text-neutral-500'}`}>[ {greeting} ]</div>
+              <div className={`font-serif text-[1.7rem] uppercase tracking-[0.02em] sm:text-[2.15rem] ${selected ? 'text-[#c4ff0e]' : 'text-[var(--app-text)]'}`}>{todayLabel}</div>
+              <p className={`max-w-4xl text-[11px] leading-6 sm:text-sm sm:leading-7 ${selected ? 'text-[#c4ff0e]/90' : 'text-[var(--app-text)]'}`}>
                 {activeClients.length === 0 && unpaidInvoices.length === 0
                   ? 'The air is still. A small signal can shift the whole board if you send it first.'
                   : `You have ${activeClients.length} active clients and ${unpaidInvoices.length} open invoices worth ${formatCurrency(unpaidAmount)}. Current burn rate is ${burnRate}%.`}
               </p>
-              <div className="text-sm uppercase tracking-[0.25em] text-neutral-300">
+              <div className={`text-[10px] uppercase tracking-[0.38em] sm:text-sm sm:tracking-[0.24em] ${selected ? 'text-[#c4ff0e]/75' : 'text-neutral-300'}`}>
                 {greeting === 'GOOD MORNING'
                   ? 'Start clean. Wake the system carefully.'
                   : greeting === 'GOOD AFTERNOON'
@@ -271,7 +280,7 @@ export function Dashboard({ clients, financials, onOpenClient }) {
                     : 'The work slows down. The signal should not.'}
               </div>
             </div>
-          </Panel>
+          </section>
         );
       case 'burnRate':
         return (
@@ -344,7 +353,7 @@ export function Dashboard({ clients, financials, onOpenClient }) {
 
   return (
     <div className="space-y-4">
-      <div className="grid auto-rows-[22rem] gap-4 2xl:grid-cols-4">
+      <div className="grid auto-rows-[18rem] gap-4 2xl:grid-cols-4">
         {widgetOrder
           .filter((widgetId) => widgetVisibility[widgetId] !== false)
           .map((widgetId) => (

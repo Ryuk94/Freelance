@@ -198,7 +198,7 @@ function CommandMenu({
   if (!open) return null;
   return (
     <div className="pointer-events-none fixed inset-0 z-50">
-      <div className="absolute bottom-6 left-6 h-[28rem] w-[28rem]">
+      <div className="absolute bottom-6 left-6 h-[31rem] w-[31rem]">
         <div className="command-orb command-orb-open" />
         <button
           type="button"
