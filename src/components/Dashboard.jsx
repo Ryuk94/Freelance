@@ -256,12 +256,12 @@ export function Dashboard({ clients, financials, onOpenClient }) {
         return (
           <Panel key={widgetId} title={todayLabel} eyebrow={`[ ${greeting} ]`} {...common} draggable>
             <div className="space-y-3">
-              <p className={`max-w-4xl text-sm leading-7 ${selected ? 'text-black/85' : 'text-neutral-300'}`}>
+              <p className="max-w-4xl text-sm leading-7 text-[var(--app-text)]">
                 {activeClients.length === 0 && unpaidInvoices.length === 0
                   ? 'The air is still. A small signal can shift the whole board if you send it first.'
                   : `You have ${activeClients.length} active clients and ${unpaidInvoices.length} open invoices worth ${formatCurrency(unpaidAmount)}. Current burn rate is ${burnRate}%.`}
               </p>
-              <div className={`text-sm uppercase tracking-[0.25em] ${selected ? 'text-black/70' : 'text-neutral-400'}`}>
+              <div className="text-sm uppercase tracking-[0.25em] text-neutral-300">
                 {greeting === 'GOOD MORNING'
                   ? 'Start clean. Wake the system carefully.'
                   : greeting === 'GOOD AFTERNOON'
