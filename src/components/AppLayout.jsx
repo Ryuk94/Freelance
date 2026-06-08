@@ -230,6 +230,14 @@ export function AppLayout({
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-[var(--app-bg)] text-[var(--app-text)]">
+      {theme === 'neonos' ? (
+        <div className="pointer-events-none absolute inset-0 overflow-hidden">
+          <div className="neon-bg-grid" />
+          <div className="neon-bg-orb neon-bg-orb-a" />
+          <div className="neon-bg-orb neon-bg-orb-b" />
+          <div className="neon-bg-scanlines" />
+        </div>
+      ) : null}
       <div className="relative mx-auto flex min-h-screen max-w-[1600px] gap-4 px-4 py-4 sm:px-6 lg:px-8">
         <aside className="hidden w-[320px] shrink-0 flex-col gap-4 bg-[var(--panel-bg)] p-4 lg:flex">
           <div className="rounded-3xl bg-[var(--card-bg)] p-4 shadow-[var(--card-shadow)]">
