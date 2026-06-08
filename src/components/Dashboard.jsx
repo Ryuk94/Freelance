@@ -46,6 +46,7 @@ function Panel({
   className = '',
   selected = false,
   showHeader = true,
+  variant = 'default',
   onClick,
   onDoubleClick,
   onDragStart,
@@ -68,6 +69,7 @@ function Panel({
         'relative min-w-0 overflow-hidden rounded-xl border border-neutral-800 bg-neutral-900/80 p-5 shadow-[var(--card-shadow)] transition',
         'h-full',
         selected ? '!border-[#c4ff0e] !bg-[#c4ff0e] !text-black ring-1 ring-[#c4ff0e]' : '',
+        variant === 'hero' ? '!border-transparent !bg-transparent !p-0 !shadow-none' : '',
         span,
         className,
       ].join(' ')}
@@ -75,7 +77,7 @@ function Panel({
       {showHeader ? (
         <div className="mb-4">
           <div className={`text-[10px] uppercase tracking-[0.7em] ${selected ? '!text-black/60' : 'text-neutral-500'}`}>{eyebrow}</div>
-          <h2 className={`mt-2 font-serif text-2xl uppercase tracking-[0.08em] ${selected ? '!text-black' : 'text-[var(--app-text)]'}`}>{title}</h2>
+          <h2 className={`mt-2 font-serif uppercase tracking-[0.08em] ${variant === 'hero' ? 'text-[2rem] leading-[0.9]' : 'text-2xl'} ${selected ? '!text-black' : 'text-[var(--app-text)]'}`}>{title}</h2>
         </div>
       ) : null}
       <div className={`min-h-0 flex-1 ${showHeader ? '' : 'pt-0'}`}>
@@ -254,7 +256,7 @@ export function Dashboard({ clients, financials, onOpenClient }) {
     switch (widgetId) {
       case 'welcome':
         return (
-          <Panel key={widgetId} title={todayLabel} eyebrow={`[ ${greeting} ]`} {...common} draggable>
+          <Panel key={widgetId} title={todayLabel} eyebrow={`[ ${greeting} ]`} variant="hero" showHeader={true} draggable={false} onClick={() => setSelectedWidget(widgetId)} onDoubleClick={undefined}>
             <div className="space-y-3">
               <p className="max-w-4xl text-sm leading-7 text-[var(--app-text)]">
                 {activeClients.length === 0 && unpaidInvoices.length === 0
@@ -269,7 +271,6 @@ export function Dashboard({ clients, financials, onOpenClient }) {
                     : 'The work slows down. The signal should not.'}
               </div>
             </div>
-            {selected && <div className="absolute bottom-4 right-4 opacity-60"><StatusGlyph /></div>}
           </Panel>
         );
       case 'burnRate':
